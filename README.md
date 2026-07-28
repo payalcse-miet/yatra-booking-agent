@@ -3,36 +3,71 @@
 An AI agent prototype that plans and books Vaishno Devi yatra slots + flights
 based on natural-language user requests. Built with Streamlit.
 
-> **Important:** This is a prototype for demo purposes. It books against a
-> **mock database** of generated yatra slots and flights — it does **not**
-> connect to the real Shrine Board registration system or real airline
-> booking systems (no public APIs exist for these, and automating them
-> without permission would raise ToS/legal issues). The architecture is
-> designed so the mock data layer (`db.py`) can be swapped for real
-> integrations later without touching the agent or UI.
+> **Important:** This is a prototype for demo purposes. Yatra darshan
+> **prices** are real, researched figures (see Data Sources below);
+> flight prices are realistic but synthetic. **Seat/slot availability
+> for both is simulated** — no public dataset or API anywhere publishes
+> real-time yatra slot or airline seat inventory (that data is gated
+> behind the Shrine Board's and airlines' private booking systems).
 
-## Features
+## Data Sources
 
-- Conversational chat UI (Streamlit `st.chat_message`)
-- Hybrid agent brain:
-  - **Rule-based mode** (default) — works with zero setup, no API key
-  - **LLM-powered mode** — auto-enables if you provide an `ANTHROPIC_API_KEY`,
-    using Claude to parse free-form requests
-- Searches mock yatra slot + flight inventory, ranks combinations by price
-- Mock booking confirmation with a generated booking ID
-- Booking history sidebar
+This project uses a **CSV-file dataset** (`data/yatra_slots_dataset.csv`,
+`data/flights_dataset.csv`) as its actual data source — not a live API,
+not random on-the-fly generation. Here's exactly what's real and what
+isn't, and where each figure came from:
+
+| Field | Status | Source |
+|---|---|---|
+| Yatra Registration (Normal Darshan) price | **Real** | Free, per Shrine Board (maavaishnodevi.org) |
+| Helicopter Darshan price (₹4,640 round-trip) | **Real, verified** | Official Shrine Board rate, Katra–Sanjichhat route, revised Oct 2025 |
+| VIP/Special Darshan price (~₹500) | **Commonly cited, not officially confirmed** | Consistent across multiple pilgrimage sites; no official Shrine Board rate card found |
+| Yatra slot *seat availability* | **Simulated** | Not public anywhere — gated behind Shrine Board's login system |
+| Flight routes/airlines/times | Realistic structure | Modeled on real domestic route patterns |
+| Flight *prices* | Realistic ranges, not exact | Calibrated against real Kaggle India flight-price datasets (Easemytrip, 2019 Jet Airways-era) — but none of those datasets include Jammu specifically, so exact figures are synthetic within realistic bounds |
+| Flight *seat availability* | **Simulated** | Real-time airline seat inventory is proprietary GDS data, not public |
+
+**Datasets checked and found not to have the exact data needed:**
+- [data.gov.in](https://data.gov.in) — has real air traffic statistics, but only aggregated totals per airport/year, not per-flight records
+- Kaggle India flight-price datasets — real historical fares, but limited to 6 major metro-to-metro routes; none include Jammu
+- Shrine Board's own [Yatra Statistics](https://www.maavaishnodevi.org/yatrastatistics) page — real pilgrim footfall numbers, but only annual/monthly totals, not slot-level data
+
+This is a genuine gap, not a research shortcut: granular, route-level,
+real-time booking data for either system simply isn't published
+anywhere publicly. A real production version of this agent would need
+an official data-sharing agreement with the Shrine Board and an
+airline/GDS partner.
+
+## How the data layer works
+
+- `build_dataset.py` — generates the two master dataset CSVs (run once,
+  or already included in the repo). Uses `day_offset` instead of fixed
+  dates so the dataset stays usable regardless of when the app runs.
+- `db.py` — on first app run, copies the dataset CSVs into "live"
+  working copies (`data/yatra_slots_live.csv`, `data/flights_live.csv`)
+  with actual calendar dates computed in, and a `data/bookings.csv`.
+  All searching and seat-decrementing happens against these live files.
+- The dataset CSVs (`*_dataset.csv`) are committed to the repo; the
+  live/mutable files and bookings are gitignored, since they're
+  per-install state, not the dataset itself.
 
 ## Project structure
 
 ```
 yatra-agent/
-├── app.py          # Streamlit UI
-├── agent.py        # Agent reasoning (rule-based + optional LLM mode)
-├── db.py            # Database access layer (the "tools" the agent calls)
-├── data_gen.py       # Generates mock yatra slot & flight data into SQLite
+├── app.py                  # Streamlit UI
+├── agent.py                # Agent reasoning (rule-based + optional LLM mode)
+├── db.py                   # CSV-backed data access layer
+├── build_dataset.py         # Builds the master CSV datasets (run once)
+├── data_gen.py               # Compatibility shim, bootstraps live data on first run
 ├── requirements.txt
 ├── .gitignore
-└── data/             # SQLite DB lives here (generated on first run, gitignored)
+└── data/
+    ├── yatra_slots_dataset.csv   # master dataset (committed)
+    ├── flights_dataset.csv        # master dataset (committed)
+    ├── yatra_slots_live.csv       # generated on first run (gitignored)
+    ├── flights_live.csv            # generated on first run (gitignored)
+    └── bookings.csv                 # generated on first run (gitignored)
 ```
 
 ## Run locally
@@ -46,13 +81,13 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-The mock database is generated automatically on first run.
+Live data files are generated automatically on first run from the
+committed dataset CSVs.
 
 ### Optional: enable LLM-powered mode
 
-Either paste your key into the sidebar field in the running app, or set it
-as an environment variable before launching:
-
+Paste your Anthropic API key into the sidebar field in the running app,
+or set it as an environment variable before launching:
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 streamlit run app.py
@@ -60,26 +95,11 @@ streamlit run app.py
 
 ## Deploy for free (Streamlit Community Cloud)
 
-1. Push this repo to GitHub (see below)
+1. Push this repo to GitHub
 2. Go to [share.streamlit.io](https://share.streamlit.io), sign in with GitHub
 3. Click "New app", pick this repo and branch, set main file to `app.py`
-4. (Optional) Add `ANTHROPIC_API_KEY` under App settings → Secrets:
-   ```toml
-   ANTHROPIC_API_KEY = "sk-ant-..."
-   ```
-5. Deploy — you'll get a public URL, e.g. `https://your-app.streamlit.app`
-
-## Pushing to GitHub
-
-```bash
-cd yatra-agent
-git init
-git add .
-git commit -m "Initial prototype: Vaishno Devi yatra booking agent"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
-```
+4. (Optional) Add `ANTHROPIC_API_KEY` under App settings → Secrets
+5. Deploy — you get a public URL, e.g. `https://your-app.streamlit.app`
 
 ## Example prompts to try
 
@@ -89,13 +109,13 @@ git push -u origin main
 
 ## Roadmap / what a real version would need
 
-- Real yatra registration integration (requires Shrine Board API access
-  or authorized partnership — not available publicly)
-- Real airline booking (via GDS/airline APIs like Amadeus, not scraping)
+- Official Shrine Board data-sharing agreement for real slot inventory
+- Airline/GDS API partnership (Amadeus, Duffel, or similar) for real
+  flight search and booking
 - Payment gateway integration
 - User authentication + Aadhaar-linked ID verification for yatra slips
-- Proper error handling for concurrent seat updates (current SQLite
-  approach is fine for a demo, not for production concurrency)
+- A proper database (Postgres/etc.) instead of CSV files, once
+  concurrent multi-user bookings need to be handled reliably
 
 ## Disclaimer
 

@@ -1,0 +1,374 @@
+id,day_offset,flight_no,airline,origin,destination,departure_time,price,seats_available
+1,0,AI100,Air India,Delhi,Jammu,11:00,4486,128
+2,0,SP101,SpiceJet,Delhi,Jammu,07:00,4627,177
+3,0,VI102,Vistara,Mumbai,Jammu,14:00,6069,97
+4,0,SP103,SpiceJet,Mumbai,Jammu,19:00,5188,124
+5,0,VI104,Vistara,Bangalore,Jammu,05:00,7314,80
+6,0,VI105,Vistara,Chennai,Jammu,13:00,8192,143
+7,0,SP106,SpiceJet,Kolkata,Jammu,16:00,8634,66
+8,0,VI107,Vistara,Ahmedabad,Jammu,20:00,3811,33
+9,0,VI108,Vistara,Ahmedabad,Jammu,11:00,3881,28
+10,1,SP109,SpiceJet,Delhi,Jammu,10:00,6120,78
+11,1,SP110,SpiceJet,Delhi,Jammu,18:00,6447,171
+12,1,VI111,Vistara,Mumbai,Jammu,18:00,4200,110
+13,1,VI112,Vistara,Mumbai,Jammu,09:00,5151,64
+14,1,IN113,IndiGo,Bangalore,Jammu,13:00,9137,109
+15,1,AI114,Air India,Chennai,Jammu,20:00,5701,20
+16,1,SP115,SpiceJet,Kolkata,Jammu,20:00,8164,87
+17,1,SP116,SpiceJet,Ahmedabad,Jammu,20:00,4956,84
+18,2,IN117,IndiGo,Delhi,Jammu,20:00,5794,115
+19,2,AI118,Air India,Delhi,Jammu,20:00,4538,38
+20,2,AI119,Air India,Mumbai,Jammu,13:00,5696,3
+21,2,IN120,IndiGo,Bangalore,Jammu,09:00,7038,130
+22,2,AI121,Air India,Chennai,Jammu,09:00,8612,147
+23,2,SP122,SpiceJet,Kolkata,Jammu,08:00,8056,33
+24,2,IN123,IndiGo,Ahmedabad,Jammu,05:00,4892,34
+25,3,VI124,Vistara,Delhi,Jammu,05:00,3852,178
+26,3,AI125,Air India,Delhi,Jammu,19:00,4798,93
+27,3,AI126,Air India,Mumbai,Jammu,14:00,4652,137
+28,3,VI127,Vistara,Bangalore,Jammu,18:00,8312,78
+29,3,IN128,IndiGo,Chennai,Jammu,17:00,9336,126
+30,3,AI129,Air India,Kolkata,Jammu,08:00,5807,52
+31,3,IN130,IndiGo,Ahmedabad,Jammu,13:00,5259,129
+32,4,SP131,SpiceJet,Delhi,Jammu,14:00,5554,30
+33,4,SP132,SpiceJet,Mumbai,Jammu,15:00,4905,76
+34,4,VI133,Vistara,Bangalore,Jammu,08:00,6074,50
+35,4,AI134,Air India,Chennai,Jammu,16:00,9223,49
+36,4,IN135,IndiGo,Kolkata,Jammu,09:00,8815,37
+37,4,AI136,Air India,Kolkata,Jammu,06:00,4578,147
+38,4,VI137,Vistara,Ahmedabad,Jammu,09:00,4620,95
+39,5,SP138,SpiceJet,Delhi,Jammu,06:00,3265,130
+40,5,SP139,SpiceJet,Delhi,Jammu,07:00,5055,13
+41,5,AI140,Air India,Mumbai,Jammu,15:00,6644,164
+42,5,VI141,Vistara,Mumbai,Jammu,08:00,7332,50
+43,5,IN142,IndiGo,Bangalore,Jammu,16:00,7535,77
+44,5,VI143,Vistara,Bangalore,Jammu,12:00,6636,144
+45,5,SP144,SpiceJet,Chennai,Jammu,12:00,8001,21
+46,5,AI145,Air India,Kolkata,Jammu,16:00,4737,136
+47,5,VI146,Vistara,Ahmedabad,Jammu,12:00,4289,69
+48,5,AI147,Air India,Ahmedabad,Jammu,15:00,4953,141
+49,6,IN148,IndiGo,Delhi,Jammu,05:00,6252,39
+50,6,VI149,Vistara,Mumbai,Jammu,15:00,5889,151
+51,6,IN150,IndiGo,Mumbai,Jammu,16:00,8384,140
+52,6,AI151,Air India,Bangalore,Jammu,12:00,5607,98
+53,6,VI152,Vistara,Bangalore,Jammu,05:00,9121,99
+54,6,SP153,SpiceJet,Chennai,Jammu,11:00,8832,21
+55,6,VI154,Vistara,Chennai,Jammu,13:00,8899,111
+56,6,AI155,Air India,Kolkata,Jammu,08:00,7137,57
+57,6,AI156,Air India,Kolkata,Jammu,08:00,8074,155
+58,6,AI157,Air India,Ahmedabad,Jammu,16:00,5563,78
+59,7,AI158,Air India,Delhi,Jammu,19:00,5059,162
+60,7,VI159,Vistara,Mumbai,Jammu,09:00,6291,97
+61,7,SP160,SpiceJet,Mumbai,Jammu,18:00,5088,140
+62,7,VI161,Vistara,Bangalore,Jammu,06:00,5489,129
+63,7,SP162,SpiceJet,Chennai,Jammu,14:00,9121,100
+64,7,AI163,Air India,Chennai,Jammu,18:00,6320,69
+65,7,AI164,Air India,Kolkata,Jammu,09:00,6864,5
+66,7,AI165,Air India,Ahmedabad,Jammu,09:00,6076,169
+67,8,AI166,Air India,Delhi,Jammu,11:00,5414,95
+68,8,SP167,SpiceJet,Mumbai,Jammu,20:00,4966,164
+69,8,SP168,SpiceJet,Bangalore,Jammu,20:00,8390,83
+70,8,AI169,Air India,Bangalore,Jammu,10:00,7638,163
+71,8,SP170,SpiceJet,Chennai,Jammu,13:00,7904,132
+72,8,SP171,SpiceJet,Kolkata,Jammu,14:00,4814,35
+73,8,SP172,SpiceJet,Ahmedabad,Jammu,13:00,4985,85
+74,9,IN173,IndiGo,Delhi,Jammu,09:00,4073,32
+75,9,IN174,IndiGo,Delhi,Jammu,09:00,5445,20
+76,9,SP175,SpiceJet,Mumbai,Jammu,10:00,4775,26
+77,9,VI176,Vistara,Bangalore,Jammu,08:00,6310,53
+78,9,SP177,SpiceJet,Chennai,Jammu,13:00,6115,143
+79,9,SP178,SpiceJet,Chennai,Jammu,20:00,5711,111
+80,9,IN179,IndiGo,Kolkata,Jammu,18:00,6440,104
+81,9,SP180,SpiceJet,Ahmedabad,Jammu,14:00,4917,93
+82,10,VI181,Vistara,Delhi,Jammu,16:00,3598,99
+83,10,SP182,SpiceJet,Mumbai,Jammu,06:00,7085,111
+84,10,VI183,Vistara,Bangalore,Jammu,05:00,7568,7
+85,10,SP184,SpiceJet,Chennai,Jammu,20:00,9345,61
+86,10,VI185,Vistara,Chennai,Jammu,05:00,6724,51
+87,10,AI186,Air India,Kolkata,Jammu,17:00,8459,20
+88,10,IN187,IndiGo,Ahmedabad,Jammu,08:00,7380,88
+89,10,SP188,SpiceJet,Ahmedabad,Jammu,07:00,6001,116
+90,11,SP189,SpiceJet,Delhi,Jammu,11:00,5342,168
+91,11,SP190,SpiceJet,Mumbai,Jammu,06:00,7728,93
+92,11,VI191,Vistara,Mumbai,Jammu,08:00,4232,117
+93,11,VI192,Vistara,Bangalore,Jammu,20:00,6719,91
+94,11,AI193,Air India,Chennai,Jammu,09:00,5948,132
+95,11,IN194,IndiGo,Chennai,Jammu,18:00,6780,3
+96,11,SP195,SpiceJet,Kolkata,Jammu,07:00,7645,154
+97,11,AI196,Air India,Ahmedabad,Jammu,19:00,7398,133
+98,12,VI197,Vistara,Delhi,Jammu,18:00,6299,47
+99,12,IN198,IndiGo,Mumbai,Jammu,05:00,8089,140
+100,12,VI199,Vistara,Mumbai,Jammu,19:00,7052,36
+101,12,AI200,Air India,Bangalore,Jammu,05:00,6357,165
+102,12,VI201,Vistara,Bangalore,Jammu,11:00,6704,87
+103,12,IN202,IndiGo,Chennai,Jammu,11:00,6803,51
+104,12,VI203,Vistara,Kolkata,Jammu,13:00,5655,39
+105,12,AI204,Air India,Ahmedabad,Jammu,17:00,4933,42
+106,13,AI205,Air India,Delhi,Jammu,08:00,5147,84
+107,13,VI206,Vistara,Mumbai,Jammu,16:00,4678,148
+108,13,IN207,IndiGo,Mumbai,Jammu,06:00,6140,16
+109,13,AI208,Air India,Bangalore,Jammu,17:00,8879,115
+110,13,AI209,Air India,Chennai,Jammu,20:00,9325,81
+111,13,VI210,Vistara,Chennai,Jammu,18:00,8447,1
+112,13,IN211,IndiGo,Kolkata,Jammu,08:00,7435,49
+113,13,SP212,SpiceJet,Ahmedabad,Jammu,18:00,4800,73
+114,14,VI213,Vistara,Delhi,Jammu,07:00,5238,147
+115,14,IN214,IndiGo,Mumbai,Jammu,19:00,6521,176
+116,14,AI215,Air India,Bangalore,Jammu,13:00,5165,63
+117,14,SP216,SpiceJet,Chennai,Jammu,17:00,8717,64
+118,14,AI217,Air India,Chennai,Jammu,05:00,9094,45
+119,14,IN218,IndiGo,Kolkata,Jammu,17:00,6367,0
+120,14,VI219,Vistara,Ahmedabad,Jammu,10:00,4949,179
+121,14,SP220,SpiceJet,Ahmedabad,Jammu,18:00,4786,96
+122,15,AI221,Air India,Delhi,Jammu,16:00,4028,77
+123,15,AI222,Air India,Mumbai,Jammu,09:00,8152,142
+124,15,SP223,SpiceJet,Bangalore,Jammu,15:00,9132,174
+125,15,AI224,Air India,Chennai,Jammu,14:00,5347,15
+126,15,AI225,Air India,Kolkata,Jammu,17:00,8368,78
+127,15,IN226,IndiGo,Ahmedabad,Jammu,07:00,7128,59
+128,15,AI227,Air India,Ahmedabad,Jammu,13:00,7384,138
+129,16,SP228,SpiceJet,Delhi,Jammu,05:00,4108,131
+130,16,IN229,IndiGo,Mumbai,Jammu,13:00,7712,10
+131,16,AI230,Air India,Mumbai,Jammu,11:00,7098,174
+132,16,VI231,Vistara,Bangalore,Jammu,17:00,8950,7
+133,16,SP232,SpiceJet,Chennai,Jammu,09:00,8478,127
+134,16,VI233,Vistara,Kolkata,Jammu,08:00,5819,170
+135,16,AI234,Air India,Ahmedabad,Jammu,11:00,6363,177
+136,17,VI235,Vistara,Delhi,Jammu,17:00,4579,88
+137,17,AI236,Air India,Mumbai,Jammu,11:00,5867,84
+138,17,VI237,Vistara,Mumbai,Jammu,08:00,4730,46
+139,17,IN238,IndiGo,Bangalore,Jammu,08:00,5510,120
+140,17,AI239,Air India,Bangalore,Jammu,05:00,8335,8
+141,17,VI240,Vistara,Chennai,Jammu,18:00,6096,28
+142,17,VI241,Vistara,Kolkata,Jammu,16:00,8111,106
+143,17,VI242,Vistara,Ahmedabad,Jammu,05:00,4968,109
+144,18,VI243,Vistara,Delhi,Jammu,11:00,4878,31
+145,18,AI244,Air India,Delhi,Jammu,13:00,3739,114
+146,18,SP245,SpiceJet,Mumbai,Jammu,11:00,5081,155
+147,18,VI246,Vistara,Bangalore,Jammu,11:00,8251,71
+148,18,VI247,Vistara,Bangalore,Jammu,09:00,6629,42
+149,18,SP248,SpiceJet,Chennai,Jammu,15:00,7542,172
+150,18,VI249,Vistara,Chennai,Jammu,17:00,5206,28
+151,18,AI250,Air India,Kolkata,Jammu,10:00,8930,78
+152,18,IN251,IndiGo,Ahmedabad,Jammu,07:00,4164,127
+153,19,SP252,SpiceJet,Delhi,Jammu,19:00,6202,113
+154,19,IN253,IndiGo,Mumbai,Jammu,11:00,7571,131
+155,19,VI254,Vistara,Mumbai,Jammu,06:00,7711,47
+156,19,IN255,IndiGo,Bangalore,Jammu,15:00,5532,134
+157,19,VI256,Vistara,Bangalore,Jammu,17:00,7586,131
+158,19,AI257,Air India,Chennai,Jammu,07:00,5885,6
+159,19,IN258,IndiGo,Kolkata,Jammu,14:00,8395,31
+160,19,AI259,Air India,Ahmedabad,Jammu,14:00,5553,82
+161,20,IN260,IndiGo,Delhi,Jammu,05:00,3528,17
+162,20,IN261,IndiGo,Delhi,Jammu,07:00,5803,98
+163,20,VI262,Vistara,Mumbai,Jammu,05:00,7266,54
+164,20,AI263,Air India,Bangalore,Jammu,10:00,5185,7
+165,20,VI264,Vistara,Chennai,Jammu,05:00,8280,101
+166,20,VI265,Vistara,Kolkata,Jammu,20:00,6943,87
+167,20,IN266,IndiGo,Ahmedabad,Jammu,18:00,5163,12
+168,21,IN267,IndiGo,Delhi,Jammu,16:00,5610,19
+169,21,VI268,Vistara,Mumbai,Jammu,20:00,6660,167
+170,21,VI269,Vistara,Mumbai,Jammu,17:00,7226,129
+171,21,VI270,Vistara,Bangalore,Jammu,06:00,7464,63
+172,21,AI271,Air India,Chennai,Jammu,09:00,6067,140
+173,21,AI272,Air India,Kolkata,Jammu,13:00,4609,122
+174,21,IN273,IndiGo,Kolkata,Jammu,20:00,6117,100
+175,21,IN274,IndiGo,Ahmedabad,Jammu,17:00,7275,52
+176,22,SP275,SpiceJet,Delhi,Jammu,13:00,3478,113
+177,22,VI276,Vistara,Delhi,Jammu,10:00,4161,54
+178,22,VI277,Vistara,Mumbai,Jammu,13:00,6687,63
+179,22,IN278,IndiGo,Bangalore,Jammu,12:00,6355,145
+180,22,SP279,SpiceJet,Chennai,Jammu,10:00,8914,42
+181,22,AI280,Air India,Chennai,Jammu,16:00,9153,110
+182,22,AI281,Air India,Kolkata,Jammu,12:00,6111,114
+183,22,VI282,Vistara,Kolkata,Jammu,19:00,6544,116
+184,22,SP283,SpiceJet,Ahmedabad,Jammu,12:00,4082,147
+185,23,AI284,Air India,Delhi,Jammu,14:00,5470,106
+186,23,SP285,SpiceJet,Delhi,Jammu,13:00,3445,42
+187,23,SP286,SpiceJet,Mumbai,Jammu,15:00,5766,29
+188,23,AI287,Air India,Bangalore,Jammu,06:00,5760,127
+189,23,AI288,Air India,Chennai,Jammu,13:00,5805,55
+190,23,VI289,Vistara,Chennai,Jammu,15:00,7850,59
+191,23,IN290,IndiGo,Kolkata,Jammu,08:00,6882,176
+192,23,AI291,Air India,Kolkata,Jammu,19:00,8085,98
+193,23,IN292,IndiGo,Ahmedabad,Jammu,07:00,3824,125
+194,24,AI293,Air India,Delhi,Jammu,08:00,4434,48
+195,24,AI294,Air India,Mumbai,Jammu,17:00,5024,101
+196,24,IN295,IndiGo,Mumbai,Jammu,14:00,7175,64
+197,24,IN296,IndiGo,Bangalore,Jammu,12:00,7440,9
+198,24,VI297,Vistara,Chennai,Jammu,05:00,9230,5
+199,24,IN298,IndiGo,Kolkata,Jammu,17:00,6840,147
+200,24,SP299,SpiceJet,Kolkata,Jammu,16:00,7703,2
+201,24,AI300,Air India,Ahmedabad,Jammu,07:00,6495,35
+202,25,VI301,Vistara,Delhi,Jammu,18:00,4473,168
+203,25,AI302,Air India,Mumbai,Jammu,09:00,6575,10
+204,25,IN303,IndiGo,Mumbai,Jammu,18:00,7617,137
+205,25,AI304,Air India,Bangalore,Jammu,20:00,7897,76
+206,25,SP305,SpiceJet,Bangalore,Jammu,12:00,7022,108
+207,25,IN306,IndiGo,Chennai,Jammu,16:00,5699,0
+208,25,IN307,IndiGo,Kolkata,Jammu,16:00,6677,171
+209,25,VI308,Vistara,Kolkata,Jammu,20:00,4832,152
+210,25,IN309,IndiGo,Ahmedabad,Jammu,13:00,7248,32
+211,25,SP310,SpiceJet,Ahmedabad,Jammu,17:00,5149,120
+212,26,SP311,SpiceJet,Delhi,Jammu,19:00,3826,45
+213,26,SP312,SpiceJet,Delhi,Jammu,07:00,6075,130
+214,26,VI313,Vistara,Mumbai,Jammu,07:00,5717,13
+215,26,VI314,Vistara,Bangalore,Jammu,13:00,5708,78
+216,26,SP315,SpiceJet,Chennai,Jammu,15:00,5979,63
+217,26,AI316,Air India,Chennai,Jammu,09:00,7881,66
+218,26,AI317,Air India,Kolkata,Jammu,19:00,5305,180
+219,26,VI318,Vistara,Ahmedabad,Jammu,16:00,4902,124
+220,27,SP319,SpiceJet,Delhi,Jammu,08:00,4657,171
+221,27,SP320,SpiceJet,Delhi,Jammu,10:00,6037,153
+222,27,IN321,IndiGo,Mumbai,Jammu,14:00,6537,144
+223,27,AI322,Air India,Mumbai,Jammu,15:00,6445,39
+224,27,AI323,Air India,Bangalore,Jammu,10:00,7386,103
+225,27,IN324,IndiGo,Chennai,Jammu,19:00,7991,142
+226,27,IN325,IndiGo,Chennai,Jammu,13:00,7238,23
+227,27,AI326,Air India,Kolkata,Jammu,12:00,7568,124
+228,27,SP327,SpiceJet,Ahmedabad,Jammu,16:00,4230,69
+229,28,SP328,SpiceJet,Delhi,Jammu,19:00,3538,173
+230,28,AI329,Air India,Delhi,Jammu,14:00,4787,79
+231,28,SP330,SpiceJet,Mumbai,Jammu,16:00,4909,23
+232,28,IN331,IndiGo,Bangalore,Jammu,18:00,7801,26
+233,28,AI332,Air India,Chennai,Jammu,05:00,7668,102
+234,28,SP333,SpiceJet,Chennai,Jammu,19:00,8849,152
+235,28,IN334,IndiGo,Kolkata,Jammu,12:00,6124,110
+236,28,IN335,IndiGo,Ahmedabad,Jammu,07:00,4706,144
+237,28,AI336,Air India,Ahmedabad,Jammu,17:00,4454,52
+238,29,AI337,Air India,Delhi,Jammu,09:00,6164,145
+239,29,SP338,SpiceJet,Mumbai,Jammu,20:00,5541,114
+240,29,IN339,IndiGo,Bangalore,Jammu,11:00,4815,180
+241,29,IN340,IndiGo,Bangalore,Jammu,05:00,6108,44
+242,29,VI341,Vistara,Chennai,Jammu,18:00,7778,75
+243,29,VI342,Vistara,Chennai,Jammu,10:00,5314,48
+244,29,SP343,SpiceJet,Kolkata,Jammu,15:00,5042,72
+245,29,AI344,Air India,Ahmedabad,Jammu,16:00,4565,8
+246,29,SP345,SpiceJet,Ahmedabad,Jammu,18:00,6309,174
+247,30,AI346,Air India,Delhi,Jammu,10:00,5483,93
+248,30,VI347,Vistara,Mumbai,Jammu,19:00,6248,2
+249,30,IN348,IndiGo,Bangalore,Jammu,16:00,8799,77
+250,30,AI349,Air India,Bangalore,Jammu,08:00,6377,22
+251,30,VI350,Vistara,Chennai,Jammu,13:00,9167,104
+252,30,IN351,IndiGo,Kolkata,Jammu,16:00,4859,121
+253,30,SP352,SpiceJet,Ahmedabad,Jammu,19:00,6570,19
+254,30,IN353,IndiGo,Ahmedabad,Jammu,14:00,4277,70
+255,31,IN354,IndiGo,Delhi,Jammu,18:00,6052,109
+256,31,SP355,SpiceJet,Delhi,Jammu,15:00,3527,157
+257,31,SP356,SpiceJet,Mumbai,Jammu,06:00,6017,44
+258,31,AI357,Air India,Mumbai,Jammu,17:00,5182,156
+259,31,VI358,Vistara,Bangalore,Jammu,09:00,7518,99
+260,31,IN359,IndiGo,Bangalore,Jammu,18:00,4901,31
+261,31,VI360,Vistara,Chennai,Jammu,14:00,9368,86
+262,31,VI361,Vistara,Kolkata,Jammu,17:00,6823,148
+263,31,VI362,Vistara,Ahmedabad,Jammu,05:00,6880,78
+264,31,SP363,SpiceJet,Ahmedabad,Jammu,11:00,7339,106
+265,32,IN364,IndiGo,Delhi,Jammu,12:00,4437,157
+266,32,AI365,Air India,Mumbai,Jammu,16:00,5886,44
+267,32,VI366,Vistara,Mumbai,Jammu,19:00,5793,172
+268,32,IN367,IndiGo,Bangalore,Jammu,06:00,5615,136
+269,32,IN368,IndiGo,Chennai,Jammu,07:00,7392,178
+270,32,VI369,Vistara,Chennai,Jammu,09:00,5799,134
+271,32,IN370,IndiGo,Kolkata,Jammu,11:00,5579,74
+272,32,VI371,Vistara,Kolkata,Jammu,16:00,5548,76
+273,32,AI372,Air India,Ahmedabad,Jammu,06:00,6551,166
+274,32,AI373,Air India,Ahmedabad,Jammu,10:00,4869,163
+275,33,AI374,Air India,Delhi,Jammu,07:00,5850,121
+276,33,IN375,IndiGo,Mumbai,Jammu,14:00,6590,0
+277,33,AI376,Air India,Bangalore,Jammu,13:00,7249,66
+278,33,IN377,IndiGo,Chennai,Jammu,19:00,9171,4
+279,33,SP378,SpiceJet,Kolkata,Jammu,12:00,7071,125
+280,33,SP379,SpiceJet,Ahmedabad,Jammu,08:00,4406,12
+281,34,AI380,Air India,Delhi,Jammu,10:00,6482,173
+282,34,IN381,IndiGo,Delhi,Jammu,14:00,3228,112
+283,34,VI382,Vistara,Mumbai,Jammu,20:00,5785,108
+284,34,AI383,Air India,Bangalore,Jammu,17:00,8487,116
+285,34,VI384,Vistara,Bangalore,Jammu,16:00,5535,94
+286,34,SP385,SpiceJet,Chennai,Jammu,19:00,6468,29
+287,34,SP386,SpiceJet,Kolkata,Jammu,05:00,7121,86
+288,34,SP387,SpiceJet,Ahmedabad,Jammu,06:00,6487,66
+289,34,IN388,IndiGo,Ahmedabad,Jammu,14:00,6234,45
+290,35,SP389,SpiceJet,Delhi,Jammu,05:00,3521,171
+291,35,SP390,SpiceJet,Mumbai,Jammu,19:00,7531,67
+292,35,SP391,SpiceJet,Bangalore,Jammu,13:00,5900,123
+293,35,SP392,SpiceJet,Bangalore,Jammu,14:00,6599,52
+294,35,IN393,IndiGo,Chennai,Jammu,18:00,7728,154
+295,35,VI394,Vistara,Chennai,Jammu,17:00,8479,159
+296,35,VI395,Vistara,Kolkata,Jammu,17:00,4550,62
+297,35,IN396,IndiGo,Kolkata,Jammu,09:00,6363,115
+298,35,SP397,SpiceJet,Ahmedabad,Jammu,13:00,6694,144
+299,36,VI398,Vistara,Delhi,Jammu,05:00,3397,106
+300,36,VI399,Vistara,Mumbai,Jammu,05:00,5603,0
+301,36,SP400,SpiceJet,Mumbai,Jammu,13:00,4665,6
+302,36,VI401,Vistara,Bangalore,Jammu,16:00,7704,62
+303,36,IN402,IndiGo,Chennai,Jammu,13:00,7466,128
+304,36,AI403,Air India,Kolkata,Jammu,19:00,8023,73
+305,36,IN404,IndiGo,Kolkata,Jammu,13:00,8115,161
+306,36,IN405,IndiGo,Ahmedabad,Jammu,08:00,4661,90
+307,37,IN406,IndiGo,Delhi,Jammu,15:00,5211,71
+308,37,IN407,IndiGo,Mumbai,Jammu,10:00,6506,43
+309,37,VI408,Vistara,Mumbai,Jammu,05:00,7710,108
+310,37,AI409,Air India,Bangalore,Jammu,09:00,9118,107
+311,37,VI410,Vistara,Bangalore,Jammu,20:00,5189,67
+312,37,SP411,SpiceJet,Chennai,Jammu,15:00,5924,19
+313,37,AI412,Air India,Chennai,Jammu,07:00,8349,160
+314,37,IN413,IndiGo,Kolkata,Jammu,18:00,7230,32
+315,37,VI414,Vistara,Ahmedabad,Jammu,12:00,4516,123
+316,38,AI415,Air India,Delhi,Jammu,18:00,4384,80
+317,38,AI416,Air India,Delhi,Jammu,09:00,4360,34
+318,38,VI417,Vistara,Mumbai,Jammu,08:00,6253,171
+319,38,AI418,Air India,Mumbai,Jammu,15:00,6321,137
+320,38,VI419,Vistara,Bangalore,Jammu,06:00,5642,165
+321,38,IN420,IndiGo,Bangalore,Jammu,16:00,9135,8
+322,38,AI421,Air India,Chennai,Jammu,13:00,5341,57
+323,38,IN422,IndiGo,Kolkata,Jammu,05:00,7960,26
+324,38,VI423,Vistara,Ahmedabad,Jammu,12:00,6940,5
+325,39,AI424,Air India,Delhi,Jammu,18:00,4410,92
+326,39,VI425,Vistara,Mumbai,Jammu,20:00,4463,128
+327,39,SP426,SpiceJet,Mumbai,Jammu,07:00,5689,90
+328,39,VI427,Vistara,Bangalore,Jammu,11:00,8707,95
+329,39,AI428,Air India,Chennai,Jammu,10:00,9327,96
+330,39,VI429,Vistara,Kolkata,Jammu,06:00,8549,91
+331,39,VI430,Vistara,Kolkata,Jammu,19:00,7419,46
+332,39,IN431,IndiGo,Ahmedabad,Jammu,20:00,4931,0
+333,40,VI432,Vistara,Delhi,Jammu,16:00,4853,28
+334,40,SP433,SpiceJet,Mumbai,Jammu,07:00,4485,87
+335,40,IN434,IndiGo,Mumbai,Jammu,07:00,6253,85
+336,40,IN435,IndiGo,Bangalore,Jammu,09:00,7796,50
+337,40,AI436,Air India,Chennai,Jammu,06:00,5279,113
+338,40,AI437,Air India,Kolkata,Jammu,16:00,5852,67
+339,40,SP438,SpiceJet,Kolkata,Jammu,05:00,5751,35
+340,40,IN439,IndiGo,Ahmedabad,Jammu,13:00,6613,163
+341,41,IN440,IndiGo,Delhi,Jammu,20:00,4645,67
+342,41,SP441,SpiceJet,Mumbai,Jammu,20:00,4978,94
+343,41,AI442,Air India,Bangalore,Jammu,15:00,6958,104
+344,41,IN443,IndiGo,Bangalore,Jammu,12:00,7602,28
+345,41,SP444,SpiceJet,Chennai,Jammu,14:00,5488,25
+346,41,VI445,Vistara,Kolkata,Jammu,19:00,6189,67
+347,41,VI446,Vistara,Kolkata,Jammu,19:00,7263,103
+348,41,IN447,IndiGo,Ahmedabad,Jammu,10:00,6411,172
+349,42,AI448,Air India,Delhi,Jammu,16:00,4820,164
+350,42,SP449,SpiceJet,Delhi,Jammu,11:00,6014,19
+351,42,IN450,IndiGo,Mumbai,Jammu,07:00,8424,6
+352,42,AI451,Air India,Mumbai,Jammu,09:00,4999,36
+353,42,IN452,IndiGo,Bangalore,Jammu,05:00,9087,58
+354,42,AI453,Air India,Chennai,Jammu,09:00,8917,129
+355,42,VI454,Vistara,Kolkata,Jammu,10:00,7070,61
+356,42,SP455,SpiceJet,Kolkata,Jammu,12:00,7165,68
+357,42,AI456,Air India,Ahmedabad,Jammu,07:00,6274,128
+358,42,SP457,SpiceJet,Ahmedabad,Jammu,06:00,5666,169
+359,43,AI458,Air India,Delhi,Jammu,15:00,5722,48
+360,43,VI459,Vistara,Mumbai,Jammu,18:00,6310,53
+361,43,VI460,Vistara,Bangalore,Jammu,14:00,5103,160
+362,43,VI461,Vistara,Chennai,Jammu,09:00,5460,115
+363,43,IN462,IndiGo,Kolkata,Jammu,09:00,6470,76
+364,43,VI463,Vistara,Ahmedabad,Jammu,19:00,5978,138
+365,44,AI464,Air India,Delhi,Jammu,13:00,4574,96
+366,44,IN465,IndiGo,Mumbai,Jammu,13:00,6310,132
+367,44,SP466,SpiceJet,Bangalore,Jammu,10:00,5105,109
+368,44,AI467,Air India,Bangalore,Jammu,12:00,5026,60
+369,44,AI468,Air India,Chennai,Jammu,16:00,7472,150
+370,44,SP469,SpiceJet,Chennai,Jammu,19:00,9452,34
+371,44,IN470,IndiGo,Kolkata,Jammu,20:00,4830,161
+372,44,SP471,SpiceJet,Ahmedabad,Jammu,15:00,7273,179
+373,44,IN472,IndiGo,Ahmedabad,Jammu,20:00,5525,20

@@ -13,8 +13,74 @@ from data_gen import build_database
 
 st.set_page_config(page_title="Vaishno Devi Yatra Agent", page_icon="🛕", layout="centered")
 
+# --- Custom styling ---
+st.markdown(
+    """
+    <style>
+    .stChatMessage { border-radius: 14px; }
+    div[data-testid="stChatMessage"] { padding: 4px 0; }
+    .banner-wrap {
+        border-radius: 18px;
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 18px rgba(179,58,30,0.18);
+    }
+    .step-pill {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-right: 8px;
+        margin-bottom: 1rem;
+    }
+    .step-active { background: #B33A1E; color: #FFFFFF; }
+    .step-inactive { background: #FCEEDD; color: #5c3a22; }
+    .plan-total {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #B33A1E;
+        margin-top: 0.4rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# --- Banner (pure decorative SVG — no text embedded, so nothing is ever hard to read) ---
+st.markdown(
+    """
+    <div class="banner-wrap">
+    <svg viewBox="0 0 900 140" width="100%" style="display:block;">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#F7A469"/>
+          <stop offset="100%" stop-color="#B33A1E"/>
+        </linearGradient>
+      </defs>
+      <rect width="900" height="140" fill="url(#sky)"/>
+      <circle cx="770" cy="40" r="28" fill="#FFE9C7" opacity="0.9"/>
+      <polygon points="0,140 140,55 260,140" fill="#7a2a17" opacity="0.55"/>
+      <polygon points="180,140 340,30 520,140" fill="#8f3420" opacity="0.75"/>
+      <polygon points="420,140 560,60 760,140" fill="#7a2a17" opacity="0.55"/>
+      <polygon points="650,140 780,45 900,140" fill="#8f3420" opacity="0.75"/>
+      <g fill="#FFF3E2" opacity="0.95">
+        <rect x="415" y="105" width="70" height="35"/>
+        <polygon points="415,105 450,72 485,105"/>
+        <rect x="443" y="55" width="14" height="20"/>
+        <circle cx="450" cy="50" r="6"/>
+      </g>
+    </svg>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# --- Title, plain text on the normal page background for full readability ---
+st.title("🛕 Vaishno Devi Yatra Agent")
+
 # --- One-time DB setup ---
-if not os.path.exists("data/yatra.db"):
+if not os.path.exists("data/yatra_slots_dataset.csv"):
     with st.spinner("Setting up mock yatra & flight data..."):
         build_database()
 
@@ -60,7 +126,17 @@ with st.sidebar:
             st.write(f"**Flight:** {b.get('flight_no', '-')} from {b.get('origin', '-')}")
             st.write(f"**Total:** ₹{b['total_price']}")
 
-st.title("🛕 Vaishno Devi Yatra Booking Agent")
+def render_steps(current):
+    labels = ["1 · Tell us your trip", "2 · Review options", "3 · Confirm booking"]
+    html = ""
+    for i, label in enumerate(labels, start=1):
+        cls = "step-active" if i == current else "step-inactive"
+        html += f'<span class="step-pill {cls}">{label}</span>'
+    st.markdown(html, unsafe_allow_html=True)
+
+current_step = 2 if st.session_state.pending_plan else 1
+render_steps(current_step)
+
 st.caption("Prototype — bookings are simulated against mock data, not real yatra registration or airline systems.")
 
 # --- Chat history ---
@@ -73,39 +149,41 @@ if st.session_state.pending_plan:
     plan = st.session_state.pending_plan
     with st.chat_message("assistant"):
         f, s = plan["flight"], plan["slot"]
-        st.markdown("**Here's the best plan I found:**")
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown("**✈️ Flight**")
-            st.write(f"{f['airline']} {f['flight_no']}")
-            st.write(f"{f['origin']} → {f['destination']}")
-            st.write(f"{f['flight_date']} at {f['departure_time']}")
-            st.write(f"₹{f['price']} / person")
-        with col2:
-            st.markdown("**🙏 Yatra slot**")
-            st.write(f"{s['category']}")
-            st.write(f"{s['slot_date']} at {s['slot_time']}")
-            st.write(f"₹{s['price']} / person")
-        st.markdown(f"**Total for {plan['pax']} pilgrim(s): ₹{plan['total_price']}**")
+        with st.container(border=True):
+            st.markdown("**Here's the best plan I found:**")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**✈️ Flight**")
+                st.write(f"{f['airline']} {f['flight_no']}")
+                st.write(f"{f['origin']} → {f['destination']}")
+                st.write(f"{f['flight_date']} at {f['departure_time']}")
+                st.write(f"₹{f['price']} / person")
+            with col2:
+                st.markdown("**🙏 Yatra slot**")
+                st.write(f"{s['category']}")
+                st.write(f"{s['slot_date']} at {s['slot_time']}")
+                st.write(f"₹{s['price']} / person")
+            st.markdown(
+                f'<div class="plan-total">Total for {plan["pax"]} pilgrim(s): ₹{plan["total_price"]}</div>',
+                unsafe_allow_html=True,
+            )
 
-        c1, c2 = st.columns(2)
-        with c1:
-            name = st.text_input("Name for booking", key="booking_name")
-        with c2:
-            st.write("")
-            if st.button("Confirm booking", type="primary"):
-                if name.strip():
-                    booking_id = agent.confirm_booking(plan, name.strip())
-                    st.session_state.messages.append(
-                        {
-                            "role": "assistant",
-                            "content": f"✅ Booked! Your confirmation ID is **{booking_id}**. Total paid (mock): ₹{plan['total_price']}.",
-                        }
-                    )
-                    st.session_state.pending_plan = None
-                    st.rerun()
-                else:
-                    st.warning("Please enter a name first.")
+            with st.form(key="booking_form", clear_on_submit=False):
+                name = st.text_input("Name for booking")
+                submitted = st.form_submit_button("Confirm booking", type="primary")
+                if submitted:
+                    if name.strip():
+                        booking_id = agent.confirm_booking(plan, name.strip())
+                        st.session_state.messages.append(
+                            {
+                                "role": "assistant",
+                                "content": f"✅ Booked! Your confirmation ID is **{booking_id}**. Total paid (mock): ₹{plan['total_price']}.",
+                            }
+                        )
+                        st.session_state.pending_plan = None
+                        st.rerun()
+                    else:
+                        st.warning("Please enter a name first.")
 
 # --- Chat input ---
 if prompt := st.chat_input("Describe your trip..."):

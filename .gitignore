@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+data/*_live.csv
+data/bookings.csv
+.env
+.streamlit/secrets.toml
+.venv/
+venv/
