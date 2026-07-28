@@ -28,6 +28,8 @@ CATEGORY_KEYWORDS = {
     "normal": "Normal Darshan",
 }
 
+MAX_OPTIONS = 3  # how many ranked flight+slot combinations to show for review
+
 
 def _use_llm():
     return bool(os.environ.get("ANTHROPIC_API_KEY"))
@@ -90,7 +92,8 @@ def parse_request(text):
 def build_plan(request):
     """
     Core planning logic shared by both modes: query slots + flights,
-    pick the best-fit combination, and return a structured result.
+    rank every valid combination, and return the top options so the
+    user can compare and pick rather than being handed a single match.
     """
     missing = []
     if not request.get("origin"):
@@ -120,45 +123,59 @@ def build_plan(request):
             "flights_found": len(flights),
         }
 
-    # Simple ranking: cheapest combined total that shares a plausible date
-    # (flight a day before/same day as the yatra slot)
-    best = None
+    # Rank every valid combination (flight lands a day before/same day as
+    # the yatra slot) by cheapest total, then keep the top few distinct
+    # options so the person can compare and choose rather than just
+    # being handed one "best" answer.
+    combos = []
     for f in flights[:15]:
         for s in slots[:15]:
             if s["slot_date"] >= f["flight_date"]:
                 total = (f["price"] + s["price"]) * request["pax"]
-                if best is None or total < best["total_price"]:
-                    best = {
-                        "flight": f,
-                        "slot": s,
-                        "total_price": total,
-                    }
+                combos.append({"flight": f, "slot": s, "total_price": total})
 
-    if not best:
+    if not combos:
         return {
             "status": "NO_COMBINATION",
             "message": "Found flights and slots separately, but no valid combination (flight would arrive after the yatra slot). Try a wider date range.",
         }
 
+    combos.sort(key=lambda c: c["total_price"])
+
+    # De-duplicate by (flight, category) rather than (flight, slot id):
+    # slot rows for the same category only differ by time-of-day and share
+    # the same price, so keying on slot id alone produced 3 "options" that
+    # were really the same flight+price shown 3 times. Keying on category
+    # means the top slots shown are meaningfully different in flight
+    # and/or price, not just a different clock time for the same thing.
+    options = []
+    seen = set()
+    for c in combos:
+        key = (c["flight"]["id"], c["slot"]["category"])
+        if key in seen:
+            continue
+        seen.add(key)
+        options.append(c)
+        if len(options) >= MAX_OPTIONS:
+            break
+
     return {
         "status": "PLAN_READY",
         "pax": request["pax"],
-        "flight": best["flight"],
-        "slot": best["slot"],
-        "total_price": best["total_price"],
+        "options": options,
         "alt_slots_count": len(slots),
         "alt_flights_count": len(flights),
     }
 
 
-def confirm_booking(plan, user_name):
-    """Executes the mock booking for a PLAN_READY result."""
+def confirm_booking(option, pax, user_name):
+    """Executes the mock booking for a chosen option from PLAN_READY['options']."""
     booking_id = db.create_booking(
         user_name=user_name,
-        pax_count=plan["pax"],
-        yatra_slot_id=plan["slot"]["id"],
-        flight_id=plan["flight"]["id"],
-        total_price=plan["total_price"],
+        pax_count=pax,
+        yatra_slot_id=option["slot"]["id"],
+        flight_id=option["flight"]["id"],
+        total_price=option["total_price"],
     )
     return booking_id
 

@@ -17,7 +17,10 @@ def build_database():
     os.makedirs("data", exist_ok=True)
     if not os.path.exists("data/yatra_slots_dataset.csv"):
         build_dataset.build_yatra_slots_dataset()
+    if not os.path.exists("data/flights_dataset.csv"):
         build_dataset.build_flights_dataset()
+    if not os.path.exists("data/users_dataset.csv"):
+        build_dataset.build_users_dataset()
     db.ensure_live_data()
 
 

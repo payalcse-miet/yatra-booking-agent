@@ -2,35 +2,46 @@
 db.py
 All data access lives here, backed by CSV files instead of a database.
 
-- data/yatra_slots_dataset.csv and data/flights_dataset.csv are the
-  static, checked-in datasets (built once by build_dataset.py).
+- data/yatra_slots_dataset.csv, data/flights_dataset.csv and
+  data/users_dataset.csv are the static, checked-in datasets (built
+  once by build_dataset.py).
 - On first run, these are copied into "live" working CSVs
-  (data/yatra_slots_live.csv, data/flights_live.csv) with actual
-  calendar dates computed from each row's day_offset. All searching
-  and seat-decrementing happens against these live copies.
+  (data/yatra_slots_live.csv, data/flights_live.csv, data/users_live.csv)
+  with actual calendar dates computed from each row's day_offset. All
+  searching, seat-decrementing, and new sign-ups happen against these
+  live copies.
 - data/bookings.csv stores completed (mock) bookings.
 
 Function signatures match the previous SQLite version, so agent.py
 and app.py don't need to change.
+
+NOTE on auth: passwords are stored as plain SHA-256 hashes with no
+per-user salt. That's fine for a local prototype/demo, but it is NOT
+production-grade auth - a real deployment would need salted hashing
+(e.g. bcrypt/argon2) and a real identity provider.
 """
 
+import hashlib
 import os
 import uuid
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import pandas as pd
 
 DATA_DIR = "data"
 YATRA_DATASET = f"{DATA_DIR}/yatra_slots_dataset.csv"
 FLIGHTS_DATASET = f"{DATA_DIR}/flights_dataset.csv"
+USERS_DATASET = f"{DATA_DIR}/users_dataset.csv"
 YATRA_LIVE = f"{DATA_DIR}/yatra_slots_live.csv"
 FLIGHTS_LIVE = f"{DATA_DIR}/flights_live.csv"
+USERS_LIVE = f"{DATA_DIR}/users_live.csv"
 BOOKINGS_FILE = f"{DATA_DIR}/bookings.csv"
 
 BOOKINGS_COLUMNS = [
     "booking_id", "user_name", "pax_count", "yatra_slot_id", "flight_id",
     "total_price", "status", "created_at",
 ]
+USERS_COLUMNS = ["username", "password_hash", "display_name", "created_at"]
 
 
 def ensure_live_data():
@@ -50,6 +61,13 @@ def ensure_live_data():
         df["flight_date"] = df["day_offset"].apply(lambda d: (today + timedelta(days=int(d))).isoformat())
         df = df.drop(columns=["day_offset"])
         df.to_csv(FLIGHTS_LIVE, index=False)
+
+    if not os.path.exists(USERS_LIVE):
+        if os.path.exists(USERS_DATASET):
+            df = pd.read_csv(USERS_DATASET)
+        else:
+            df = pd.DataFrame(columns=USERS_COLUMNS)
+        df.to_csv(USERS_LIVE, index=False)
 
     if not os.path.exists(BOOKINGS_FILE):
         pd.DataFrame(columns=BOOKINGS_COLUMNS).to_csv(BOOKINGS_FILE, index=False)
@@ -103,8 +121,6 @@ def create_booking(user_name, pax_count, yatra_slot_id, flight_id, total_price):
             flights.loc[idx[0], "seats_available"] -= pax_count
             flights.to_csv(FLIGHTS_LIVE, index=False)
 
-    from datetime import datetime
-
     bookings = pd.read_csv(BOOKINGS_FILE)
     new_row = {
         "booking_id": booking_id,
@@ -147,11 +163,15 @@ def get_booking(booking_id):
     return b
 
 
-def list_bookings():
+def list_bookings(user_name=None):
     ensure_live_data()
     bookings = pd.read_csv(BOOKINGS_FILE)
     if bookings.empty:
         return []
+    if user_name:
+        bookings = bookings[bookings["user_name"] == user_name]
+        if bookings.empty:
+            return []
     slots = pd.read_csv(YATRA_LIVE)
     flights = pd.read_csv(FLIGHTS_LIVE)
 
@@ -170,3 +190,44 @@ def list_bookings():
                 b["origin"] = f.iloc[0]["origin"]
         results.append(b)
     return results
+
+
+# ---------------------------------------------------------------------
+# User accounts (demo auth for the login page)
+# ---------------------------------------------------------------------
+
+def _hash_pw(password):
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def create_user(username, password, display_name):
+    """Returns (True, None) on success, or (False, error_message) on failure."""
+    ensure_live_data()
+    username = username.strip().lower()
+    if not username or not password:
+        return False, "Username and password are required."
+    users = pd.read_csv(USERS_LIVE)
+    if (users["username"] == username).any():
+        return False, "That username is already taken."
+    new_row = {
+        "username": username,
+        "password_hash": _hash_pw(password),
+        "display_name": display_name.strip() or username,
+        "created_at": datetime.now().isoformat(timespec="seconds"),
+    }
+    users = pd.concat([users, pd.DataFrame([new_row])], ignore_index=True)
+    users.to_csv(USERS_LIVE, index=False)
+    return True, None
+
+
+def verify_user(username, password):
+    """Returns display_name if credentials match, else None."""
+    ensure_live_data()
+    username = username.strip().lower()
+    users = pd.read_csv(USERS_LIVE)
+    match = users[users["username"] == username]
+    if match.empty:
+        return None
+    if match.iloc[0]["password_hash"] == _hash_pw(password):
+        return match.iloc[0]["display_name"]
+    return None

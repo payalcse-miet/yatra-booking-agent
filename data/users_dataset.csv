@@ -1,0 +1,3 @@
+username,password_hash,display_name,created_at
+demo,d3ad9315b7be5dd53b31a273b3b3aba5defe700808305aa16a3062b76658a791,Demo Pilgrim,seed
+guest,6b93ccba414ac1d0ae1e77f3fac560c748a6701ed6946735a49d463351518e16,Guest User,seed
