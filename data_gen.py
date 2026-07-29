@@ -19,6 +19,12 @@ def build_database():
         build_dataset.build_yatra_slots_dataset()
     if not os.path.exists("data/flights_dataset.csv"):
         build_dataset.build_flights_dataset()
+    if not os.path.exists("data/trains_dataset.csv"):
+        build_dataset.build_trains_dataset()
+    if not os.path.exists("data/buses_dataset.csv"):
+        build_dataset.build_buses_dataset()
+    if not os.path.exists("data/hotels_dataset.csv"):
+        build_dataset.build_hotels_dataset()
     if not os.path.exists("data/users_dataset.csv"):
         build_dataset.build_users_dataset()
     db.ensure_live_data()

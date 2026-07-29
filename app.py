@@ -4,13 +4,17 @@ Streamlit front-end for the Vaishno Devi Yatra Booking Agent prototype.
 Run locally with: streamlit run app.py
 """
 
-import os
+from datetime import date, timedelta
+
 import streamlit as st
 
 import agent
 import auth
 import db
+import explore_data
 import payment
+import weather
+import yatra_info
 from data_gen import build_database
 
 st.set_page_config(page_title="Vaishno Devi Yatra Agent", page_icon="🛕", layout="centered")
@@ -61,16 +65,51 @@ st.markdown(
         display:inline-block; background:#1E8449; color:#fff; font-weight:700;
         font-size:0.72rem; padding:3px 10px; border-radius:999px; margin-left:6px;
     }
+    .mode-badge {
+        display:inline-block; font-weight:700; font-size:0.72rem; padding:3px 10px;
+        border-radius:999px; margin-left:6px; background:#2E4A66; color:#fff;
+    }
+    .place-card-title { font-weight:800; font-size:1.02rem; margin-bottom:2px; }
+    .place-cat { color:#B33A1E; font-weight:700; font-size:0.75rem; }
     div[data-testid="stExpander"] { border-radius: 12px !important; }
+
+    .search-card {
+        background: linear-gradient(180deg, #FFF9F2 0%, #FCEEDD 100%);
+        border: 1px solid #F0D3B0;
+        border-radius: 18px;
+        padding: 1.4rem 1.4rem 0.6rem 1.4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 6px 20px rgba(179,58,30,0.10);
+    }
+    .search-card-title { font-family:'Poppins',sans-serif; font-weight:800; font-size:1.05rem; color:#8f3420; margin-bottom:0.8rem; }
+    div[data-testid="stForm"] div[data-testid="stFormSubmitButton"] button {
+        background: linear-gradient(135deg, #D3491F 0%, #B33A1E 100%) !important;
+        border: none !important; font-weight:700 !important; letter-spacing:0.02em;
+        box-shadow: 0 4px 14px rgba(179,58,30,0.35) !important;
+    }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
+# --- One-time DB setup: must happen BEFORE the login gate, since
+# signing up/logging in itself touches the users/bookings CSVs, which
+# depend on the dataset CSVs already existing. build_database() checks
+# each dataset file individually and only (re)builds what's actually
+# missing, so it's safe and cheap to call on every run - this also
+# self-heals a data/ folder that has some older dataset files (e.g.
+# yatra/flights from an earlier version) but not the newer ones
+# (trains/buses/users), instead of erroring on the missing ones. ---
+with st.spinner("Setting up mock yatra, flight, train & bus data..."):
+    build_database()
+
 # --- Login gate: everything below only renders once authenticated ---
 auth.require_login()
 
-# --- Banner (pure decorative SVG — no text embedded, so nothing is ever hard to read) ---
+MODE_ICON = {"flight": "✈️", "train": "🚆", "bus": "🚌"}
+MODE_LABEL = {"flight": "Flight", "train": "Train", "bus": "Bus"}
+
+# --- Banner ---
 st.markdown(
     """
     <div class="banner-wrap">
@@ -101,13 +140,6 @@ st.markdown(
 
 st.title("🛕 Vaishno Devi Yatra Agent")
 
-# --- One-time DB setup ---
-if not os.path.exists("data/yatra_slots_dataset.csv"):
-    with st.spinner("Setting up mock yatra & flight data..."):
-        build_database()
-else:
-    db.ensure_live_data()
-
 # --- Session state ---
 if "messages" not in st.session_state:
     st.session_state.messages = [
@@ -115,15 +147,19 @@ if "messages" not in st.session_state:
             "role": "assistant",
             "content": (
                 f"Namaste {st.session_state.auth_display_name}! I'm your Vaishno Devi yatra booking agent (prototype). "
-                "Tell me your travel dates, city, and number of pilgrims, e.g. "
-                "\"Book for 3 people from Delhi next week, VIP darshan.\""
+                "Tell me your travel dates, city, and number of pilgrims — I'll compare flights, trains, and buses. E.g. "
+                "\"Book for 3 people from Delhi next week, VIP darshan\" or \"2 people from Delhi by train, helicopter darshan.\""
             ),
         }
     ]
 if "pending_options" not in st.session_state:
-    st.session_state.pending_options = None  # {"pax":.., "options":[...]}
+    st.session_state.pending_options = None
 if "selected_option" not in st.session_state:
-    st.session_state.selected_option = None  # {"pax":.., "option":{...}}
+    st.session_state.selected_option = None
+if "hotel_decision" not in st.session_state:
+    st.session_state.hotel_decision = None  # None = not decided yet, {} = skipped, {...} = chosen
+if "sightseeing_decision" not in st.session_state:
+    st.session_state.sightseeing_decision = None  # None = not decided yet, [] = skipped, [...] = chosen places
 
 # --- Sidebar ---
 with st.sidebar:
@@ -131,19 +167,6 @@ with st.sidebar:
     auth.logout_button()
     st.divider()
 
-    st.header("Settings")
-    api_key_input = st.text_input(
-        "Anthropic API key (optional)",
-        type="password",
-        value=os.environ.get("ANTHROPIC_API_KEY", ""),
-        help="Leave blank to use the built-in rule-based agent. Add a key to let Claude handle understanding requests.",
-    )
-    if api_key_input:
-        st.success("LLM-powered mode active")
-    else:
-        st.info("Rule-based mode active (no key needed)")
-
-    st.divider()
     st.header("Booking history")
     bookings = db.list_bookings(user_name=st.session_state.auth_display_name)
     if not bookings:
@@ -153,12 +176,18 @@ with st.sidebar:
             st.write(f"**Name:** {b['user_name']}")
             st.write(f"**Pax:** {b['pax_count']}")
             st.write(f"**Yatra:** {b.get('category', '-')} on {b.get('slot_date', '-')}")
-            st.write(f"**Flight:** {b.get('flight_no', '-')} from {b.get('origin', '-')}")
+            mode = b.get("transport_mode", "-")
+            icon = MODE_ICON.get(mode, "")
+            st.write(f"**{icon} {MODE_LABEL.get(mode, 'Transport')}:** {b.get('transport_no', '-')} from {b.get('origin', '-')}")
+            if b.get("hotel_name") and str(b.get("hotel_name")) != "nan":
+                st.write(f"**🏨 Hotel:** {b.get('hotel_name')} ({b.get('hotel_category', '-')}), {b.get('hotel_nights', '-')} night(s)")
+            if b.get("sightseeing_places") and str(b.get("sightseeing_places")) != "nan":
+                st.write(f"**🗺️ Sightseeing:** {b.get('sightseeing_places')}")
             st.write(f"**Total:** ₹{b['total_price']}")
 
 
 def render_steps(current):
-    labels = ["1 · Tell us your trip", "2 · Review options", "3 · Pay & confirm"]
+    labels = ["1 · Tell us your trip", "2 · Review options", "3 · Add a stay", "4 · Sightseeing", "5 · Pay & confirm"]
     html = ""
     for i, label in enumerate(labels, start=1):
         if i == current:
@@ -171,147 +200,434 @@ def render_steps(current):
     st.markdown(html, unsafe_allow_html=True)
 
 
-if st.session_state.selected_option:
-    current_step = 3
-elif st.session_state.pending_options:
-    current_step = 2
-else:
-    current_step = 1
-render_steps(current_step)
-
-st.caption("Prototype — bookings are simulated against mock data, not real yatra registration or airline systems. Payment is a simulated demo checkout.")
-
-# --- Chat history ---
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        st.markdown(msg["content"])
-
-
 def _reset_flow():
     st.session_state.pending_options = None
     st.session_state.selected_option = None
+    st.session_state.hotel_decision = None
+    st.session_state.sightseeing_decision = None
 
 
-# --- STEP 2: render selectable, clickable option cards ---
-if st.session_state.pending_options:
-    bundle = st.session_state.pending_options
-    pax = bundle["pax"]
-    options = bundle["options"]
+# --- Top-level tabs ---
+tab_book, tab_explore = st.tabs(["🎫 Book your yatra", "🗺️ Explore Katra"])
 
-    with st.chat_message("assistant"):
-        st.markdown(f"**Here are the top {len(options)} option(s) I found — pick one to continue:**")
+with tab_book:
+    if st.session_state.selected_option and st.session_state.hotel_decision is not None and st.session_state.sightseeing_decision is not None:
+        current_step = 5
+    elif st.session_state.selected_option and st.session_state.hotel_decision is not None:
+        current_step = 4
+    elif st.session_state.selected_option:
+        current_step = 3
+    elif st.session_state.pending_options:
+        current_step = 2
+    else:
+        current_step = 1
+    render_steps(current_step)
 
-        for i, opt in enumerate(options):
-            f, s = opt["flight"], opt["slot"]
-            with st.container(border=True):
-                badge_html = f'<span class="option-badge">Option {i + 1}</span>'
-                if i == 0:
-                    badge_html += '<span class="best-badge">💰 Cheapest</span>'
-                st.markdown(badge_html, unsafe_allow_html=True)
+    st.caption(
+        "Prototype — bookings are simulated against mock data, not real yatra registration or "
+        "airline/rail/bus systems. Payment is a simulated demo checkout."
+    )
 
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown("**✈️ Flight**")
-                    st.write(f"{f['airline']} {f['flight_no']}")
-                    st.write(f"{f['origin']} → {f['destination']}")
-                    st.write(f"{f['flight_date']} at {f['departure_time']}")
-                    st.write(f"₹{f['price']} / person")
-                with col2:
-                    st.markdown("**🙏 Yatra slot**")
-                    st.write(f"{s['category']}")
-                    st.write(f"{s['slot_date']} at {s['slot_time']}")
-                    st.write(f"₹{s['price']} / person")
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-                st.markdown(
-                    f'<div class="plan-total">Total for {pax} pilgrim(s): ₹{opt["total_price"]}</div>',
-                    unsafe_allow_html=True,
-                )
-
-                with st.expander("View full flight & yatra slot details"):
-                    st.write("**Flight details**")
-                    st.json({
-                        "Flight no.": f["flight_no"], "Airline": f["airline"],
-                        "Route": f"{f['origin']} → {f['destination']}", "Date": f["flight_date"],
-                        "Departure": f["departure_time"], "Duration": f"{f.get('duration_mins', '-')} min",
-                        "Stops": f.get("stops", "-"), "Seats left": f["seats_available"],
-                        "Fare / person": f"₹{f['price']}",
-                    })
-                    st.write("**Yatra slot details**")
-                    st.json({
-                        "Category": s["category"], "Date": s["slot_date"], "Time": s["slot_time"],
-                        "Seats left": s["seats_available"], "Fee / person": f"₹{s['price']}",
-                    })
-
-                if st.button(f"Select option {i + 1}", key=f"select_opt_{i}", type="primary", use_container_width=True):
-                    st.session_state.selected_option = {"pax": pax, "option": opt}
-                    st.session_state.pending_options = None
-                    st.rerun()
-
-        if st.button("← Start over", key="restart_from_step2"):
-            _reset_flow()
-            st.rerun()
-
-# --- STEP 3: payment gateway, then confirm the booking ---
-elif st.session_state.selected_option:
-    bundle = st.session_state.selected_option
-    pax, opt = bundle["pax"], bundle["option"]
-    f, s = opt["flight"], opt["slot"]
-
-    with st.chat_message("assistant"):
-        st.markdown("**Review & pay to confirm your booking:**")
-        with st.container(border=True):
-            st.write(f"✈️ {f['airline']} {f['flight_no']} · {f['origin']} → {f['destination']} · {f['flight_date']}")
-            st.write(f"🙏 {s['category']} · {s['slot_date']} at {s['slot_time']}")
-            st.write(f"👥 {pax} pilgrim(s)")
-
-        paid = payment.render_payment_form("Total for this booking:", opt["total_price"])
-
-        if paid:
-            booking_id = agent.confirm_booking(opt, pax, st.session_state.auth_display_name)
-            st.balloons()
-            st.session_state.messages.append(
-                {
-                    "role": "assistant",
-                    "content": f"✅ Booked! Your confirmation ID is **{booking_id}**. Total paid (mock): ₹{opt['total_price']}.",
-                }
-            )
-            _reset_flow()
-            st.rerun()
-
-        if st.button("← Back to options", key="back_to_step2"):
-            st.session_state.pending_options = {"pax": pax, "options": [opt]}
-            st.session_state.selected_option = None
-            st.rerun()
-
-# --- STEP 1: chat input ---
-else:
-    if prompt := st.chat_input("Describe your trip..."):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+    # --- STEP 2: selectable option cards, one per transport mode when possible ---
+    if st.session_state.pending_options:
+        bundle = st.session_state.pending_options
+        pax = bundle["pax"]
+        options = bundle["options"]
 
         with st.chat_message("assistant"):
-            with st.spinner("Checking slots and flights..."):
-                result = agent.process_message(prompt, api_key=api_key_input or None)
+            st.markdown(f"**Here are the top {len(options)} option(s) I found — pick one to continue:**")
 
-            if result["status"] == "NEEDS_INFO":
-                reply = result["message"]
-            elif result["status"] == "NO_AVAILABILITY":
-                reply = result["message"]
-            elif result["status"] == "NO_COMBINATION":
+            for i, opt in enumerate(options):
+                tr, s = opt["flight"], opt["slot"]
+                mode = tr.get("mode", "flight")
+                icon = MODE_ICON.get(mode, "🚗")
+                label = MODE_LABEL.get(mode, mode.title())
+
+                with st.container(border=True):
+                    badge_html = f'<span class="option-badge">Option {i + 1}</span><span class="mode-badge">{icon} {label}</span>'
+                    if i == 0:
+                        badge_html += '<span class="best-badge">💰 Cheapest</span>'
+                    st.markdown(badge_html, unsafe_allow_html=True)
+
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown(f"**{icon} {label}**")
+                        st.write(f"{tr.get('operator', '-')} {tr.get('transport_no', '')}")
+                        st.write(f"{tr['origin']} → {tr['destination']}")
+                        st.write(f"{tr['travel_date']} at {tr['departure_time']}")
+                        st.write(f"₹{tr['price']} / person")
+                    with col2:
+                        st.markdown("**🙏 Yatra slot**")
+                        st.write(f"{s['category']}")
+                        st.write(f"{s['slot_date']} at {s['slot_time']}")
+                        st.write(f"₹{s['price']} / person")
+
+                    st.markdown(
+                        f'<div class="plan-total">Total for {pax} pilgrim(s): ₹{opt["total_price"]}</div>',
+                        unsafe_allow_html=True,
+                    )
+
+                    with st.expander("View full details"):
+                        st.write(f"**{label} details**")
+                        st.json({
+                            "Operator": tr.get("operator", "-"), "Number": tr.get("transport_no", "-"),
+                            "Route": f"{tr['origin']} → {tr['destination']}", "Date": tr["travel_date"],
+                            "Departure": tr["departure_time"], "Duration": f"{tr.get('duration_mins', '-')} min",
+                            "Seats left": tr["seats_available"], "Fare / person": f"₹{tr['price']}",
+                        })
+                        st.write("**Yatra slot details**")
+                        st.json({
+                            "Category": s["category"], "Date": s["slot_date"], "Time": s["slot_time"],
+                            "Seats left": s["seats_available"], "Fee / person": f"₹{s['price']}",
+                        })
+
+                    if st.button(f"Select option {i + 1}", key=f"select_opt_{i}", type="primary", use_container_width=True):
+                        st.session_state.selected_option = {"pax": pax, "option": opt}
+                        st.session_state.pending_options = None
+                        st.rerun()
+
+            if st.button("← Start over", key="restart_from_step2"):
+                _reset_flow()
+                st.rerun()
+
+    # --- STEP 3: optional hotel stay in Katra, plus how-to-reach-Katra taxi info ---
+    elif st.session_state.selected_option and st.session_state.hotel_decision is None:
+        bundle = st.session_state.selected_option
+        pax, opt = bundle["pax"], bundle["option"]
+        tr, s = opt["flight"], opt["slot"]
+        check_in_default = tr["travel_date"]
+
+        with st.chat_message("assistant"):
+            st.markdown("**Getting to Katra, weather, and where to stay:**")
+
+            w = weather.get_weather(s["slot_date"])
+            with st.container(border=True):
+                if w["source"] == "forecast":
+                    st.markdown(f"🌤️ **Forecast for {w['date']}:** {w['summary']}, {w['low_c']}–{w['high_c']}°C")
+                else:
+                    st.markdown(f"🌤️ **Typical weather around {w['date']}:** {w['summary']}, {w['low_c']}–{w['high_c']}°C")
+                    st.caption("More than 15 days out — showing a seasonal average, not a live forecast.")
+                st.caption(w["advisory"])
+                st.caption(yatra_info.get_packing_tip(w))
+
+            taxi = explore_data.get_taxi_info()
+            with st.container(border=True):
+                st.markdown(f"🚕 **{taxi['route']}** · {taxi['distance']} · {taxi['duration']}")
+                for opt_taxi in taxi["options"]:
+                    st.write(f"- {opt_taxi['vehicle']} (up to {opt_taxi['capacity']}): {opt_taxi['fare_range']}")
+                st.caption(taxi["note"])
+                if tr.get("mode") != "flight":
+                    st.caption(f"Note: since you're arriving in Katra directly by {MODE_LABEL.get(tr.get('mode'), 'this mode')}, you may not need this leg — it mainly applies to flight arrivals via Jammu Airport.")
+
+            st.markdown("**🏨 Would you like to add a hotel stay in Katra?**")
+
+            with st.form("hotel_form"):
+                want_hotel = st.radio("Add a hotel?", ["No, skip this", "Yes, show me hotels"], horizontal=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    hotel_category_choice = st.selectbox("Category", ["Any", "Budget", "Mid-Range", "Premium"])
+                with col2:
+                    nights = st.number_input("Nights", min_value=1, max_value=7, value=1)
+                hotel_search_clicked = st.form_submit_button("Continue", type="primary", use_container_width=True)
+
+            if hotel_search_clicked:
+                if want_hotel == "No, skip this":
+                    st.session_state.hotel_decision = {}
+                    st.rerun()
+                else:
+                    hotels = db.search_hotels(
+                        check_in_default,
+                        category=None if hotel_category_choice == "Any" else hotel_category_choice,
+                    )
+                    st.session_state[f"_hotel_results"] = {"hotels": hotels, "nights": nights}
+
+            hotel_results = st.session_state.get("_hotel_results")
+            if hotel_results:
+                hotels, nights = hotel_results["hotels"], hotel_results["nights"]
+                if not hotels:
+                    st.warning("No hotels found for that category on this date. Try 'Any' category or skip.")
+                else:
+                    for h in hotels[:5]:
+                        with st.container(border=True):
+                            stars = "⭐" * int(round(h.get("rating", 0)))
+                            st.markdown(f"**{h['name']}** · {h['category']} · {stars} {h.get('rating', '-')}")
+                            st.write(f"₹{h['price_per_night']}/night · {nights} night(s) → ₹{h['price_per_night'] * nights} total")
+                            st.caption(f"{h['rooms_available']} rooms left for check-in {check_in_default} · rating is sample data, not a real review score")
+                            if st.button(f"Select {h['name']}", key=f"select_hotel_{h['id']}", use_container_width=True):
+                                st.session_state.hotel_decision = {"hotel": h, "nights": nights}
+                                st.session_state.pop("_hotel_results", None)
+                                st.rerun()
+
+            if st.button("← Back to options", key="back_to_step2_from_hotel"):
+                st.session_state.pending_options = {"pax": pax, "options": [opt]}
+                st.session_state.selected_option = None
+                st.rerun()
+
+    # --- STEP 4: optional sightseeing after darshan, drawn from the Explore Katra places ---
+    elif st.session_state.selected_option and st.session_state.hotel_decision is not None and st.session_state.sightseeing_decision is None:
+        bundle = st.session_state.selected_option
+        pax, opt = bundle["pax"], bundle["option"]
+
+        with st.chat_message("assistant"):
+            st.markdown("**🗺️ Planning to visit any tourist places after darshan?**")
+            st.caption("Informational only — these aren't bookable, but we'll note your picks on the confirmation.")
+
+            with st.form("sightseeing_form"):
+                want_sightseeing = st.radio(
+                    "Add sightseeing?", ["No, skip this", "Yes, show me places"], horizontal=True
+                )
+                categories = ["All"] + explore_data.get_categories()
+                sightseeing_category_choice = st.selectbox("Filter by category", categories)
+                sightseeing_continue_clicked = st.form_submit_button(
+                    "Continue", type="primary", use_container_width=True
+                )
+
+            if sightseeing_continue_clicked:
+                if want_sightseeing == "No, skip this":
+                    st.session_state.sightseeing_decision = []
+                    st.rerun()
+                else:
+                    places = explore_data.get_places(
+                        None if sightseeing_category_choice == "All" else sightseeing_category_choice
+                    )
+                    st.session_state["_sightseeing_results"] = places
+
+            sightseeing_results = st.session_state.get("_sightseeing_results")
+            if sightseeing_results:
+                st.write("Check off the places you'd like to visit, then confirm below:")
+                selected_names = []
+                for p in sightseeing_results:
+                    with st.container(border=True):
+                        checked = st.checkbox(
+                            f"{p['name']} · {p['category']} ({p['distance']})",
+                            key=f"sightsee_{p['name']}",
+                        )
+                        st.caption(p["description"])
+                        st.caption(f"🚕 Getting there: {explore_data.get_local_travel_note(p['category'])}")
+                        if checked:
+                            selected_names.append(p["name"])
+
+                if st.button("Confirm sightseeing picks", type="primary", use_container_width=True):
+                    st.session_state.sightseeing_decision = selected_names
+                    st.session_state.pop("_sightseeing_results", None)
+                    st.rerun()
+
+            if st.button("← Back to stay", key="back_to_step3_from_sightseeing"):
+                st.session_state.hotel_decision = None
+                st.session_state.pop("_sightseeing_results", None)
+                st.rerun()
+
+    # --- STEP 5: payment gateway, then confirm the booking ---
+    elif st.session_state.selected_option:
+        bundle = st.session_state.selected_option
+        pax, opt = bundle["pax"], bundle["option"]
+        tr, s = opt["flight"], opt["slot"]
+        mode = tr.get("mode", "flight")
+        icon = MODE_ICON.get(mode, "🚗")
+        hotel_choice = st.session_state.hotel_decision or {}
+        hotel = hotel_choice.get("hotel")
+        hotel_nights = hotel_choice.get("nights", 0)
+        hotel_cost = (hotel["price_per_night"] * hotel_nights) if hotel else 0
+        sightseeing_places = st.session_state.sightseeing_decision or []
+        grand_total = opt["total_price"] + hotel_cost
+
+        with st.chat_message("assistant"):
+            st.markdown("**Review & pay to confirm your booking:**")
+            with st.container(border=True):
+                st.write(f"{icon} {tr.get('operator', '-')} {tr.get('transport_no', '')} · {tr['origin']} → {tr['destination']} · {tr['travel_date']}")
+                st.write(f"🙏 {s['category']} · {s['slot_date']} at {s['slot_time']}")
+                st.write(f"👥 {pax} pilgrim(s)")
+                if hotel:
+                    st.write(f"🏨 {hotel['name']} ({hotel['category']}) · {hotel_nights} night(s) · ₹{hotel_cost}")
+                else:
+                    st.write("🏨 No hotel added")
+                if sightseeing_places:
+                    st.write(f"🗺️ Sightseeing: {', '.join(sightseeing_places)}")
+                else:
+                    st.write("🗺️ No sightseeing added")
+
+            trip_days = max(hotel_nights, 1)
+            misc_low = pax * trip_days * 400
+            misc_high = pax * trip_days * 700
+            st.caption(
+                f"💡 Rough extra budget to keep in mind for food, local taxis, and prasad/offerings: "
+                f"₹{misc_low}–₹{misc_high} for {pax} pilgrim(s) over {trip_days} day(s). "
+                "This is a general planning estimate only — it's not part of your bill below."
+            )
+
+            paid = payment.render_payment_form("Total for this booking:", grand_total)
+
+            if paid:
+                booking_id = agent.confirm_booking(
+                    opt, pax, st.session_state.auth_display_name,
+                    hotel=hotel, hotel_nights=hotel_nights,
+                    sightseeing_places=sightseeing_places,
+                )
+                st.balloons()
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": f"✅ Booked! Your confirmation ID is **{booking_id}**. Total paid (mock): ₹{grand_total}.",
+                    }
+                )
+                _reset_flow()
+                st.rerun()
+
+            if st.button("← Back", key="back_to_step4"):
+                st.session_state.sightseeing_decision = None
+                st.rerun()
+
+    # --- STEP 1: MakeMyTrip-style search form, plus an optional free-text fallback ---
+    else:
+
+        def _handle_search_result(result, user_summary):
+            """Shared by both the dropdown form and the free-text box: appends
+            the exchange to chat history and stashes options for step 2."""
+            st.session_state.messages.append({"role": "user", "content": user_summary})
+
+            if result["status"] in ("NEEDS_INFO", "NO_AVAILABILITY", "NO_COMBINATION"):
                 reply = result["message"]
             elif result["status"] == "PLAN_READY":
+                modes_found = sorted({o["flight"]["mode"] for o in result["options"]})
+                mode_str = ", ".join(MODE_LABEL.get(m, m) for m in modes_found)
                 reply = (
-                    f"Found a plan across {result['alt_flights_count']} flight option(s) and "
+                    f"Found a plan across {result['alt_flights_count']} travel option(s) and "
                     f"{result['alt_slots_count']} yatra slot option(s). Here are the top "
-                    f"{len(result['options'])} to compare below."
+                    f"{len(result['options'])} to compare ({mode_str}) below."
                 )
                 st.session_state.pending_options = {"pax": result["pax"], "options": result["options"]}
             else:
-                reply = "Something went wrong understanding that — could you rephrase with your city, dates, and number of pilgrims?"
+                reply = "Something went wrong — could you try again with a city, date, and number of pilgrims?"
 
-            st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
 
-        if result["status"] == "PLAN_READY":
+        origins = db.get_distinct_origins()
+
+        with st.container():
+            st.markdown('<div class="search-card">', unsafe_allow_html=True)
+            st.markdown('<div class="search-card-title">🔍 Search flights, trains & buses to Katra</div>', unsafe_allow_html=True)
+
+            with st.form("search_form"):
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    origin = st.selectbox("📍 From", origins, index=origins.index("Delhi") if "Delhi" in origins else 0)
+                with c2:
+                    mode_choice = st.selectbox("🚦 Travel by", ["Any", "Flight", "Train", "Bus"])
+                with c3:
+                    pax = st.selectbox("👥 Pilgrims", list(range(1, 11)), index=0)
+
+                c4, c5 = st.columns(2)
+                with c4:
+                    category_choice = st.selectbox(
+                        "🙏 Darshan type", ["Any", "Normal Darshan", "VIP Darshan", "Helicopter Darshan"]
+                    )
+                with c5:
+                    min_date = date.today()
+                    max_date = date.today() + timedelta(days=44)
+                    default_date = min(min_date + timedelta(days=7), max_date)
+                    journey_date = st.date_input(
+                        "📅 Journey date", value=default_date, min_value=min_date, max_value=max_date
+                    )
+
+                search_clicked = st.form_submit_button("🔍 Search", type="primary", use_container_width=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        if search_clicked:
+            request = {
+                "pax": pax,
+                "origin": origin,
+                "category": None if category_choice == "Any" else category_choice,
+                "mode": None if mode_choice == "Any" else mode_choice.lower(),
+                "start_date": journey_date.isoformat(),
+                "end_date": journey_date.isoformat(),
+            }
+            with st.spinner("Checking slots, flights, trains & buses..."):
+                result = agent.build_plan(request)
+
+            summary = f"{pax} pilgrim(s) from {origin} on {journey_date.isoformat()}"
+            if mode_choice != "Any":
+                summary += f", by {mode_choice}"
+            if category_choice != "Any":
+                summary += f", {category_choice}"
+            _handle_search_result(result, summary)
             st.rerun()
+
+        with st.expander("Or just describe your trip in your own words"):
+            if prompt := st.chat_input("e.g. Book for 3 people from Delhi next week, VIP darshan"):
+                with st.spinner("Checking slots, flights, trains & buses..."):
+                    result = agent.process_message(prompt)
+                _handle_search_result(result, prompt)
+                st.rerun()
+
+with tab_explore:
+    st.subheader("🙏 Yatra essentials")
+    with st.container(border=True):
+        aarti = yatra_info.AARTI_SCHEDULE
+        st.markdown("**Aarti timings**")
+        for w in aarti["windows"]:
+            st.write(f"- {w['label']}: {w['time']}")
+        st.caption(aarti["note"])
+        st.caption(aarti["shrine_hours"])
+
+    with st.container(border=True):
+        reg = yatra_info.REGISTRATION_INFO
+        st.markdown("**Yatra registration**")
+        st.write(reg["summary"])
+        st.write(reg["how"])
+        st.caption(reg["note"])
+
+    with st.container(border=True):
+        st.markdown("**Route options to Bhawan**")
+        for r in yatra_info.ROUTE_OPTIONS:
+            st.write(f"- **{r['name']}** ({r['distance']}): {r['detail']}")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        with st.container(border=True):
+            st.markdown("**Packing & rules**")
+            for item in yatra_info.PACKING_AND_RULES["prohibited"]:
+                st.write(f"🚫 {item}")
+            for tip in yatra_info.PACKING_AND_RULES["general_tips"]:
+                st.write(f"✅ {tip}")
+    with col2:
+        with st.container(border=True):
+            st.markdown("**Free facilities on route**")
+            for f in yatra_info.FREE_FACILITIES:
+                st.write(f"- {f}")
+
+    with st.container(border=True):
+        helpline = yatra_info.EMERGENCY_HELPLINE
+        st.markdown("**🆘 Emergency / helpline**")
+        st.write(f"Toll-free: {helpline['toll_free']} · Phone: {helpline['phone']} · WhatsApp: {helpline['whatsapp']}")
+        st.caption(helpline["note"])
+
+    st.divider()
+    st.subheader("Getting from Jammu to Katra")
+    taxi = explore_data.get_taxi_info()
+    with st.container(border=True):
+        st.markdown(f"🚕 **{taxi['route']}** · {taxi['distance']} · {taxi['duration']}")
+        for opt_taxi in taxi["options"]:
+            st.write(f"- {opt_taxi['vehicle']} (up to {opt_taxi['capacity']}): {opt_taxi['fare_range']}")
+        st.caption(taxi["note"])
+
+    st.subheader("Places to see around Katra & Jammu")
+    st.caption(
+        "Informational only — not bookable through this app. Distances are approximate, "
+        "drawn from general pilgrimage-tourism sources."
+    )
+
+    categories = ["All"] + explore_data.get_categories()
+    chosen = st.selectbox("Filter by category", categories)
+    places = explore_data.get_places(None if chosen == "All" else chosen)
+
+    for p in places:
+        with st.container(border=True):
+            st.markdown(f'<div class="place-card-title">{p["name"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<span class="place-cat">{p["category"]}</span> · {p["distance"]}', unsafe_allow_html=True)
+            st.write(p["description"])
+            st.caption(f"🚕 Getting there: {explore_data.get_local_travel_note(p['category'])}")

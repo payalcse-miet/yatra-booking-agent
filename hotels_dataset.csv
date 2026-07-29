@@ -1,0 +1,496 @@
+id,day_offset,name,category,price_per_night,rooms_available,rating
+1,0,Trikuta Guest House,Budget,750,26,3.7
+2,0,Ban Ganga Comfort Stay,Budget,1475,26,4.6
+3,0,Yatri Niwas Lodge,Budget,749,26,4.8
+4,0,Katra Bus Stand Inn,Budget,649,29,3.4
+5,0,Trikuta Residency,Mid-Range,3968,17,4.1
+6,0,Bhawan View Hotel,Mid-Range,3944,2,4.4
+7,0,Katra Heritage Inn,Mid-Range,3154,20,3.3
+8,0,Devi Darshan Hotel,Mid-Range,2196,12,4.1
+9,0,Trikuta Hills Resort,Premium,5738,11,3.8
+10,0,Vaishnavi Grand,Premium,7248,1,4.6
+11,0,Katra Palace Hotel,Premium,7453,12,4.3
+12,1,Trikuta Guest House,Budget,620,9,3.7
+13,1,Ban Ganga Comfort Stay,Budget,1273,15,4.6
+14,1,Yatri Niwas Lodge,Budget,857,23,4.8
+15,1,Katra Bus Stand Inn,Budget,922,11,3.4
+16,1,Trikuta Residency,Mid-Range,2270,20,4.1
+17,1,Bhawan View Hotel,Mid-Range,3969,14,4.4
+18,1,Katra Heritage Inn,Mid-Range,2885,11,3.3
+19,1,Devi Darshan Hotel,Mid-Range,2290,7,4.1
+20,1,Trikuta Hills Resort,Premium,11226,11,3.8
+21,1,Vaishnavi Grand,Premium,11758,9,4.6
+22,1,Katra Palace Hotel,Premium,10072,10,4.3
+23,2,Trikuta Guest House,Budget,1134,5,3.7
+24,2,Ban Ganga Comfort Stay,Budget,811,7,4.6
+25,2,Yatri Niwas Lodge,Budget,1357,9,4.8
+26,2,Katra Bus Stand Inn,Budget,1378,11,3.4
+27,2,Trikuta Residency,Mid-Range,3909,15,4.1
+28,2,Bhawan View Hotel,Mid-Range,3374,19,4.4
+29,2,Katra Heritage Inn,Mid-Range,3471,15,3.3
+30,2,Devi Darshan Hotel,Mid-Range,2198,13,4.1
+31,2,Trikuta Hills Resort,Premium,7265,3,3.8
+32,2,Vaishnavi Grand,Premium,7411,6,4.6
+33,2,Katra Palace Hotel,Premium,9954,5,4.3
+34,3,Trikuta Guest House,Budget,1254,6,3.7
+35,3,Ban Ganga Comfort Stay,Budget,1071,9,4.6
+36,3,Yatri Niwas Lodge,Budget,964,21,4.8
+37,3,Katra Bus Stand Inn,Budget,1143,26,3.4
+38,3,Trikuta Residency,Mid-Range,3916,20,4.1
+39,3,Bhawan View Hotel,Mid-Range,3390,15,4.4
+40,3,Katra Heritage Inn,Mid-Range,3921,7,3.3
+41,3,Devi Darshan Hotel,Mid-Range,3210,4,4.1
+42,3,Trikuta Hills Resort,Premium,6543,12,3.8
+43,3,Vaishnavi Grand,Premium,7974,4,4.6
+44,3,Katra Palace Hotel,Premium,5280,9,4.3
+45,4,Trikuta Guest House,Budget,1167,18,3.7
+46,4,Ban Ganga Comfort Stay,Budget,1385,15,4.6
+47,4,Yatri Niwas Lodge,Budget,1344,24,4.8
+48,4,Katra Bus Stand Inn,Budget,617,15,3.4
+49,4,Trikuta Residency,Mid-Range,2238,9,4.1
+50,4,Bhawan View Hotel,Mid-Range,2872,5,4.4
+51,4,Katra Heritage Inn,Mid-Range,2856,8,3.3
+52,4,Devi Darshan Hotel,Mid-Range,2975,19,4.1
+53,4,Trikuta Hills Resort,Premium,5733,3,3.8
+54,4,Vaishnavi Grand,Premium,8671,10,4.6
+55,4,Katra Palace Hotel,Premium,11310,5,4.3
+56,5,Trikuta Guest House,Budget,821,7,3.7
+57,5,Ban Ganga Comfort Stay,Budget,962,18,4.6
+58,5,Yatri Niwas Lodge,Budget,1269,21,4.8
+59,5,Katra Bus Stand Inn,Budget,704,30,3.4
+60,5,Trikuta Residency,Mid-Range,2638,7,4.1
+61,5,Bhawan View Hotel,Mid-Range,3600,10,4.4
+62,5,Katra Heritage Inn,Mid-Range,3525,17,3.3
+63,5,Devi Darshan Hotel,Mid-Range,2558,15,4.1
+64,5,Trikuta Hills Resort,Premium,9386,3,3.8
+65,5,Vaishnavi Grand,Premium,6529,3,4.6
+66,5,Katra Palace Hotel,Premium,6438,3,4.3
+67,6,Trikuta Guest House,Budget,952,7,3.7
+68,6,Ban Ganga Comfort Stay,Budget,769,20,4.6
+69,6,Yatri Niwas Lodge,Budget,1092,17,4.8
+70,6,Katra Bus Stand Inn,Budget,925,30,3.4
+71,6,Trikuta Residency,Mid-Range,2975,15,4.1
+72,6,Bhawan View Hotel,Mid-Range,3922,7,4.4
+73,6,Katra Heritage Inn,Mid-Range,1881,8,3.3
+74,6,Devi Darshan Hotel,Mid-Range,2940,11,4.1
+75,6,Trikuta Hills Resort,Premium,10863,9,3.8
+76,6,Vaishnavi Grand,Premium,10249,9,4.6
+77,6,Katra Palace Hotel,Premium,11503,4,4.3
+78,7,Trikuta Guest House,Budget,1461,27,3.7
+79,7,Ban Ganga Comfort Stay,Budget,1079,25,4.6
+80,7,Yatri Niwas Lodge,Budget,1121,12,4.8
+81,7,Katra Bus Stand Inn,Budget,832,10,3.4
+82,7,Trikuta Residency,Mid-Range,3048,11,4.1
+83,7,Bhawan View Hotel,Mid-Range,2148,20,4.4
+84,7,Katra Heritage Inn,Mid-Range,3173,19,3.3
+85,7,Devi Darshan Hotel,Mid-Range,3074,17,4.1
+86,7,Trikuta Hills Resort,Premium,8867,4,3.8
+87,7,Vaishnavi Grand,Premium,7761,1,4.6
+88,7,Katra Palace Hotel,Premium,10191,5,4.3
+89,8,Trikuta Guest House,Budget,1491,25,3.7
+90,8,Ban Ganga Comfort Stay,Budget,774,17,4.6
+91,8,Yatri Niwas Lodge,Budget,1064,6,4.8
+92,8,Katra Bus Stand Inn,Budget,1149,13,3.4
+93,8,Trikuta Residency,Mid-Range,2839,16,4.1
+94,8,Bhawan View Hotel,Mid-Range,3955,11,4.4
+95,8,Katra Heritage Inn,Mid-Range,3017,11,3.3
+96,8,Devi Darshan Hotel,Mid-Range,3890,12,4.1
+97,8,Trikuta Hills Resort,Premium,7433,7,3.8
+98,8,Vaishnavi Grand,Premium,10825,3,4.6
+99,8,Katra Palace Hotel,Premium,6179,8,4.3
+100,9,Trikuta Guest House,Budget,1311,5,3.7
+101,9,Ban Ganga Comfort Stay,Budget,1267,12,4.6
+102,9,Yatri Niwas Lodge,Budget,683,26,4.8
+103,9,Katra Bus Stand Inn,Budget,1194,27,3.4
+104,9,Trikuta Residency,Mid-Range,2439,11,4.1
+105,9,Bhawan View Hotel,Mid-Range,1874,18,4.4
+106,9,Katra Heritage Inn,Mid-Range,3045,19,3.3
+107,9,Devi Darshan Hotel,Mid-Range,1931,5,4.1
+108,9,Trikuta Hills Resort,Premium,10351,6,3.8
+109,9,Vaishnavi Grand,Premium,11967,4,4.6
+110,9,Katra Palace Hotel,Premium,6137,4,4.3
+111,10,Trikuta Guest House,Budget,1258,23,3.7
+112,10,Ban Ganga Comfort Stay,Budget,660,24,4.6
+113,10,Yatri Niwas Lodge,Budget,657,10,4.8
+114,10,Katra Bus Stand Inn,Budget,1495,3,3.4
+115,10,Trikuta Residency,Mid-Range,2315,11,4.1
+116,10,Bhawan View Hotel,Mid-Range,3552,20,4.4
+117,10,Katra Heritage Inn,Mid-Range,2889,4,3.3
+118,10,Devi Darshan Hotel,Mid-Range,2694,15,4.1
+119,10,Trikuta Hills Resort,Premium,10205,9,3.8
+120,10,Vaishnavi Grand,Premium,9492,5,4.6
+121,10,Katra Palace Hotel,Premium,7708,5,4.3
+122,11,Trikuta Guest House,Budget,988,9,3.7
+123,11,Ban Ganga Comfort Stay,Budget,1018,30,4.6
+124,11,Yatri Niwas Lodge,Budget,670,11,4.8
+125,11,Katra Bus Stand Inn,Budget,1295,25,3.4
+126,11,Trikuta Residency,Mid-Range,2177,7,4.1
+127,11,Bhawan View Hotel,Mid-Range,3385,12,4.4
+128,11,Katra Heritage Inn,Mid-Range,3705,18,3.3
+129,11,Devi Darshan Hotel,Mid-Range,2473,10,4.1
+130,11,Trikuta Hills Resort,Premium,7964,7,3.8
+131,11,Vaishnavi Grand,Premium,5914,4,4.6
+132,11,Katra Palace Hotel,Premium,8312,12,4.3
+133,12,Trikuta Guest House,Budget,902,14,3.7
+134,12,Ban Ganga Comfort Stay,Budget,905,29,4.6
+135,12,Yatri Niwas Lodge,Budget,1492,5,4.8
+136,12,Katra Bus Stand Inn,Budget,1127,9,3.4
+137,12,Trikuta Residency,Mid-Range,3297,18,4.1
+138,12,Bhawan View Hotel,Mid-Range,2624,20,4.4
+139,12,Katra Heritage Inn,Mid-Range,2632,14,3.3
+140,12,Devi Darshan Hotel,Mid-Range,3510,18,4.1
+141,12,Trikuta Hills Resort,Premium,9241,8,3.8
+142,12,Vaishnavi Grand,Premium,5178,7,4.6
+143,12,Katra Palace Hotel,Premium,11587,12,4.3
+144,13,Trikuta Guest House,Budget,840,26,3.7
+145,13,Ban Ganga Comfort Stay,Budget,761,15,4.6
+146,13,Yatri Niwas Lodge,Budget,1022,28,4.8
+147,13,Katra Bus Stand Inn,Budget,1013,26,3.4
+148,13,Trikuta Residency,Mid-Range,2358,9,4.1
+149,13,Bhawan View Hotel,Mid-Range,2675,18,4.4
+150,13,Katra Heritage Inn,Mid-Range,3059,15,3.3
+151,13,Devi Darshan Hotel,Mid-Range,2699,5,4.1
+152,13,Trikuta Hills Resort,Premium,10360,1,3.8
+153,13,Vaishnavi Grand,Premium,11669,7,4.6
+154,13,Katra Palace Hotel,Premium,8456,6,4.3
+155,14,Trikuta Guest House,Budget,1129,9,3.7
+156,14,Ban Ganga Comfort Stay,Budget,923,30,4.6
+157,14,Yatri Niwas Lodge,Budget,935,18,4.8
+158,14,Katra Bus Stand Inn,Budget,1446,26,3.4
+159,14,Trikuta Residency,Mid-Range,3944,19,4.1
+160,14,Bhawan View Hotel,Mid-Range,2537,4,4.4
+161,14,Katra Heritage Inn,Mid-Range,3590,12,3.3
+162,14,Devi Darshan Hotel,Mid-Range,2142,18,4.1
+163,14,Trikuta Hills Resort,Premium,7242,1,3.8
+164,14,Vaishnavi Grand,Premium,8575,1,4.6
+165,14,Katra Palace Hotel,Premium,6636,10,4.3
+166,15,Trikuta Guest House,Budget,854,11,3.7
+167,15,Ban Ganga Comfort Stay,Budget,1054,6,4.6
+168,15,Yatri Niwas Lodge,Budget,1468,3,4.8
+169,15,Katra Bus Stand Inn,Budget,1165,16,3.4
+170,15,Trikuta Residency,Mid-Range,3810,16,4.1
+171,15,Bhawan View Hotel,Mid-Range,2045,4,4.4
+172,15,Katra Heritage Inn,Mid-Range,3724,7,3.3
+173,15,Devi Darshan Hotel,Mid-Range,3685,4,4.1
+174,15,Trikuta Hills Resort,Premium,6214,11,3.8
+175,15,Vaishnavi Grand,Premium,11218,5,4.6
+176,15,Katra Palace Hotel,Premium,7197,7,4.3
+177,16,Trikuta Guest House,Budget,830,3,3.7
+178,16,Ban Ganga Comfort Stay,Budget,1155,20,4.6
+179,16,Yatri Niwas Lodge,Budget,1438,23,4.8
+180,16,Katra Bus Stand Inn,Budget,685,12,3.4
+181,16,Trikuta Residency,Mid-Range,3507,10,4.1
+182,16,Bhawan View Hotel,Mid-Range,3983,18,4.4
+183,16,Katra Heritage Inn,Mid-Range,2493,19,3.3
+184,16,Devi Darshan Hotel,Mid-Range,2547,8,4.1
+185,16,Trikuta Hills Resort,Premium,10634,6,3.8
+186,16,Vaishnavi Grand,Premium,5954,5,4.6
+187,16,Katra Palace Hotel,Premium,9977,9,4.3
+188,17,Trikuta Guest House,Budget,968,13,3.7
+189,17,Ban Ganga Comfort Stay,Budget,1001,4,4.6
+190,17,Yatri Niwas Lodge,Budget,645,25,4.8
+191,17,Katra Bus Stand Inn,Budget,1130,25,3.4
+192,17,Trikuta Residency,Mid-Range,3968,16,4.1
+193,17,Bhawan View Hotel,Mid-Range,3333,14,4.4
+194,17,Katra Heritage Inn,Mid-Range,2250,19,3.3
+195,17,Devi Darshan Hotel,Mid-Range,3340,6,4.1
+196,17,Trikuta Hills Resort,Premium,6318,2,3.8
+197,17,Vaishnavi Grand,Premium,8178,5,4.6
+198,17,Katra Palace Hotel,Premium,6387,8,4.3
+199,18,Trikuta Guest House,Budget,677,15,3.7
+200,18,Ban Ganga Comfort Stay,Budget,727,22,4.6
+201,18,Yatri Niwas Lodge,Budget,601,5,4.8
+202,18,Katra Bus Stand Inn,Budget,1443,22,3.4
+203,18,Trikuta Residency,Mid-Range,2004,3,4.1
+204,18,Bhawan View Hotel,Mid-Range,3312,6,4.4
+205,18,Katra Heritage Inn,Mid-Range,3108,19,3.3
+206,18,Devi Darshan Hotel,Mid-Range,1868,4,4.1
+207,18,Trikuta Hills Resort,Premium,11853,11,3.8
+208,18,Vaishnavi Grand,Premium,10427,4,4.6
+209,18,Katra Palace Hotel,Premium,10772,10,4.3
+210,19,Trikuta Guest House,Budget,1321,26,3.7
+211,19,Ban Ganga Comfort Stay,Budget,1246,3,4.6
+212,19,Yatri Niwas Lodge,Budget,1243,11,4.8
+213,19,Katra Bus Stand Inn,Budget,1096,8,3.4
+214,19,Trikuta Residency,Mid-Range,3146,18,4.1
+215,19,Bhawan View Hotel,Mid-Range,2400,2,4.4
+216,19,Katra Heritage Inn,Mid-Range,2641,20,3.3
+217,19,Devi Darshan Hotel,Mid-Range,1828,17,4.1
+218,19,Trikuta Hills Resort,Premium,8791,1,3.8
+219,19,Vaishnavi Grand,Premium,6135,1,4.6
+220,19,Katra Palace Hotel,Premium,5401,3,4.3
+221,20,Trikuta Guest House,Budget,1053,28,3.7
+222,20,Ban Ganga Comfort Stay,Budget,924,4,4.6
+223,20,Yatri Niwas Lodge,Budget,1071,5,4.8
+224,20,Katra Bus Stand Inn,Budget,1233,23,3.4
+225,20,Trikuta Residency,Mid-Range,2359,3,4.1
+226,20,Bhawan View Hotel,Mid-Range,3551,10,4.4
+227,20,Katra Heritage Inn,Mid-Range,3915,4,3.3
+228,20,Devi Darshan Hotel,Mid-Range,2698,15,4.1
+229,20,Trikuta Hills Resort,Premium,8316,5,3.8
+230,20,Vaishnavi Grand,Premium,5768,12,4.6
+231,20,Katra Palace Hotel,Premium,8433,8,4.3
+232,21,Trikuta Guest House,Budget,1281,24,3.7
+233,21,Ban Ganga Comfort Stay,Budget,1315,21,4.6
+234,21,Yatri Niwas Lodge,Budget,1415,11,4.8
+235,21,Katra Bus Stand Inn,Budget,682,9,3.4
+236,21,Trikuta Residency,Mid-Range,3744,4,4.1
+237,21,Bhawan View Hotel,Mid-Range,3588,19,4.4
+238,21,Katra Heritage Inn,Mid-Range,2852,2,3.3
+239,21,Devi Darshan Hotel,Mid-Range,3677,6,4.1
+240,21,Trikuta Hills Resort,Premium,10313,6,3.8
+241,21,Vaishnavi Grand,Premium,10553,6,4.6
+242,21,Katra Palace Hotel,Premium,7727,9,4.3
+243,22,Trikuta Guest House,Budget,742,9,3.7
+244,22,Ban Ganga Comfort Stay,Budget,1446,28,4.6
+245,22,Yatri Niwas Lodge,Budget,773,26,4.8
+246,22,Katra Bus Stand Inn,Budget,862,27,3.4
+247,22,Trikuta Residency,Mid-Range,1945,6,4.1
+248,22,Bhawan View Hotel,Mid-Range,3012,9,4.4
+249,22,Katra Heritage Inn,Mid-Range,2894,6,3.3
+250,22,Devi Darshan Hotel,Mid-Range,2865,19,4.1
+251,22,Trikuta Hills Resort,Premium,11346,4,3.8
+252,22,Vaishnavi Grand,Premium,6422,10,4.6
+253,22,Katra Palace Hotel,Premium,6042,9,4.3
+254,23,Trikuta Guest House,Budget,694,13,3.7
+255,23,Ban Ganga Comfort Stay,Budget,1195,18,4.6
+256,23,Yatri Niwas Lodge,Budget,648,4,4.8
+257,23,Katra Bus Stand Inn,Budget,1464,25,3.4
+258,23,Trikuta Residency,Mid-Range,2377,11,4.1
+259,23,Bhawan View Hotel,Mid-Range,3774,19,4.4
+260,23,Katra Heritage Inn,Mid-Range,3701,3,3.3
+261,23,Devi Darshan Hotel,Mid-Range,2102,2,4.1
+262,23,Trikuta Hills Resort,Premium,6867,4,3.8
+263,23,Vaishnavi Grand,Premium,8077,8,4.6
+264,23,Katra Palace Hotel,Premium,5070,4,4.3
+265,24,Trikuta Guest House,Budget,762,13,3.7
+266,24,Ban Ganga Comfort Stay,Budget,706,12,4.6
+267,24,Yatri Niwas Lodge,Budget,1278,29,4.8
+268,24,Katra Bus Stand Inn,Budget,827,15,3.4
+269,24,Trikuta Residency,Mid-Range,3302,6,4.1
+270,24,Bhawan View Hotel,Mid-Range,3904,17,4.4
+271,24,Katra Heritage Inn,Mid-Range,3477,11,3.3
+272,24,Devi Darshan Hotel,Mid-Range,2396,10,4.1
+273,24,Trikuta Hills Resort,Premium,5076,2,3.8
+274,24,Vaishnavi Grand,Premium,6927,7,4.6
+275,24,Katra Palace Hotel,Premium,10652,9,4.3
+276,25,Trikuta Guest House,Budget,913,27,3.7
+277,25,Ban Ganga Comfort Stay,Budget,897,27,4.6
+278,25,Yatri Niwas Lodge,Budget,865,7,4.8
+279,25,Katra Bus Stand Inn,Budget,999,11,3.4
+280,25,Trikuta Residency,Mid-Range,1808,17,4.1
+281,25,Bhawan View Hotel,Mid-Range,2129,17,4.4
+282,25,Katra Heritage Inn,Mid-Range,3755,2,3.3
+283,25,Devi Darshan Hotel,Mid-Range,3680,9,4.1
+284,25,Trikuta Hills Resort,Premium,9353,5,3.8
+285,25,Vaishnavi Grand,Premium,9343,9,4.6
+286,25,Katra Palace Hotel,Premium,11549,12,4.3
+287,26,Trikuta Guest House,Budget,1443,25,3.7
+288,26,Ban Ganga Comfort Stay,Budget,1416,11,4.6
+289,26,Yatri Niwas Lodge,Budget,848,22,4.8
+290,26,Katra Bus Stand Inn,Budget,738,3,3.4
+291,26,Trikuta Residency,Mid-Range,3929,18,4.1
+292,26,Bhawan View Hotel,Mid-Range,1954,15,4.4
+293,26,Katra Heritage Inn,Mid-Range,3088,9,3.3
+294,26,Devi Darshan Hotel,Mid-Range,2045,12,4.1
+295,26,Trikuta Hills Resort,Premium,6188,12,3.8
+296,26,Vaishnavi Grand,Premium,9931,9,4.6
+297,26,Katra Palace Hotel,Premium,8851,3,4.3
+298,27,Trikuta Guest House,Budget,1121,29,3.7
+299,27,Ban Ganga Comfort Stay,Budget,1317,20,4.6
+300,27,Yatri Niwas Lodge,Budget,898,22,4.8
+301,27,Katra Bus Stand Inn,Budget,1213,20,3.4
+302,27,Trikuta Residency,Mid-Range,2051,14,4.1
+303,27,Bhawan View Hotel,Mid-Range,3904,11,4.4
+304,27,Katra Heritage Inn,Mid-Range,2175,4,3.3
+305,27,Devi Darshan Hotel,Mid-Range,2153,3,4.1
+306,27,Trikuta Hills Resort,Premium,7563,8,3.8
+307,27,Vaishnavi Grand,Premium,6781,2,4.6
+308,27,Katra Palace Hotel,Premium,10393,1,4.3
+309,28,Trikuta Guest House,Budget,869,21,3.7
+310,28,Ban Ganga Comfort Stay,Budget,988,13,4.6
+311,28,Yatri Niwas Lodge,Budget,922,12,4.8
+312,28,Katra Bus Stand Inn,Budget,773,8,3.4
+313,28,Trikuta Residency,Mid-Range,2292,6,4.1
+314,28,Bhawan View Hotel,Mid-Range,1930,18,4.4
+315,28,Katra Heritage Inn,Mid-Range,3202,6,3.3
+316,28,Devi Darshan Hotel,Mid-Range,3947,18,4.1
+317,28,Trikuta Hills Resort,Premium,7151,12,3.8
+318,28,Vaishnavi Grand,Premium,5932,5,4.6
+319,28,Katra Palace Hotel,Premium,7193,3,4.3
+320,29,Trikuta Guest House,Budget,629,4,3.7
+321,29,Ban Ganga Comfort Stay,Budget,1334,23,4.6
+322,29,Yatri Niwas Lodge,Budget,677,15,4.8
+323,29,Katra Bus Stand Inn,Budget,1394,10,3.4
+324,29,Trikuta Residency,Mid-Range,1953,20,4.1
+325,29,Bhawan View Hotel,Mid-Range,2578,13,4.4
+326,29,Katra Heritage Inn,Mid-Range,3049,3,3.3
+327,29,Devi Darshan Hotel,Mid-Range,3033,11,4.1
+328,29,Trikuta Hills Resort,Premium,10437,3,3.8
+329,29,Vaishnavi Grand,Premium,7288,2,4.6
+330,29,Katra Palace Hotel,Premium,6026,12,4.3
+331,30,Trikuta Guest House,Budget,1229,4,3.7
+332,30,Ban Ganga Comfort Stay,Budget,1055,3,4.6
+333,30,Yatri Niwas Lodge,Budget,1313,29,4.8
+334,30,Katra Bus Stand Inn,Budget,1103,11,3.4
+335,30,Trikuta Residency,Mid-Range,2310,4,4.1
+336,30,Bhawan View Hotel,Mid-Range,2305,9,4.4
+337,30,Katra Heritage Inn,Mid-Range,3983,19,3.3
+338,30,Devi Darshan Hotel,Mid-Range,2810,8,4.1
+339,30,Trikuta Hills Resort,Premium,11299,8,3.8
+340,30,Vaishnavi Grand,Premium,9741,11,4.6
+341,30,Katra Palace Hotel,Premium,8010,4,4.3
+342,31,Trikuta Guest House,Budget,1466,12,3.7
+343,31,Ban Ganga Comfort Stay,Budget,978,11,4.6
+344,31,Yatri Niwas Lodge,Budget,660,7,4.8
+345,31,Katra Bus Stand Inn,Budget,1105,24,3.4
+346,31,Trikuta Residency,Mid-Range,3770,15,4.1
+347,31,Bhawan View Hotel,Mid-Range,3572,13,4.4
+348,31,Katra Heritage Inn,Mid-Range,3123,15,3.3
+349,31,Devi Darshan Hotel,Mid-Range,3412,8,4.1
+350,31,Trikuta Hills Resort,Premium,6662,6,3.8
+351,31,Vaishnavi Grand,Premium,10679,4,4.6
+352,31,Katra Palace Hotel,Premium,11082,6,4.3
+353,32,Trikuta Guest House,Budget,675,22,3.7
+354,32,Ban Ganga Comfort Stay,Budget,1223,7,4.6
+355,32,Yatri Niwas Lodge,Budget,1210,20,4.8
+356,32,Katra Bus Stand Inn,Budget,1350,17,3.4
+357,32,Trikuta Residency,Mid-Range,1818,19,4.1
+358,32,Bhawan View Hotel,Mid-Range,3037,16,4.4
+359,32,Katra Heritage Inn,Mid-Range,3056,3,3.3
+360,32,Devi Darshan Hotel,Mid-Range,2492,17,4.1
+361,32,Trikuta Hills Resort,Premium,5156,3,3.8
+362,32,Vaishnavi Grand,Premium,10780,8,4.6
+363,32,Katra Palace Hotel,Premium,8197,3,4.3
+364,33,Trikuta Guest House,Budget,828,26,3.7
+365,33,Ban Ganga Comfort Stay,Budget,1018,9,4.6
+366,33,Yatri Niwas Lodge,Budget,1489,12,4.8
+367,33,Katra Bus Stand Inn,Budget,1256,21,3.4
+368,33,Trikuta Residency,Mid-Range,1909,10,4.1
+369,33,Bhawan View Hotel,Mid-Range,3026,12,4.4
+370,33,Katra Heritage Inn,Mid-Range,2575,19,3.3
+371,33,Devi Darshan Hotel,Mid-Range,1951,12,4.1
+372,33,Trikuta Hills Resort,Premium,5860,5,3.8
+373,33,Vaishnavi Grand,Premium,7971,3,4.6
+374,33,Katra Palace Hotel,Premium,9109,11,4.3
+375,34,Trikuta Guest House,Budget,897,21,3.7
+376,34,Ban Ganga Comfort Stay,Budget,1301,3,4.6
+377,34,Yatri Niwas Lodge,Budget,1125,21,4.8
+378,34,Katra Bus Stand Inn,Budget,1254,27,3.4
+379,34,Trikuta Residency,Mid-Range,2266,7,4.1
+380,34,Bhawan View Hotel,Mid-Range,1888,12,4.4
+381,34,Katra Heritage Inn,Mid-Range,3307,4,3.3
+382,34,Devi Darshan Hotel,Mid-Range,3603,14,4.1
+383,34,Trikuta Hills Resort,Premium,5284,5,3.8
+384,34,Vaishnavi Grand,Premium,8104,11,4.6
+385,34,Katra Palace Hotel,Premium,8996,9,4.3
+386,35,Trikuta Guest House,Budget,1157,25,3.7
+387,35,Ban Ganga Comfort Stay,Budget,959,19,4.6
+388,35,Yatri Niwas Lodge,Budget,1069,23,4.8
+389,35,Katra Bus Stand Inn,Budget,680,22,3.4
+390,35,Trikuta Residency,Mid-Range,3948,16,4.1
+391,35,Bhawan View Hotel,Mid-Range,1865,4,4.4
+392,35,Katra Heritage Inn,Mid-Range,1875,11,3.3
+393,35,Devi Darshan Hotel,Mid-Range,3199,12,4.1
+394,35,Trikuta Hills Resort,Premium,7176,7,3.8
+395,35,Vaishnavi Grand,Premium,7175,12,4.6
+396,35,Katra Palace Hotel,Premium,10969,9,4.3
+397,36,Trikuta Guest House,Budget,989,25,3.7
+398,36,Ban Ganga Comfort Stay,Budget,983,16,4.6
+399,36,Yatri Niwas Lodge,Budget,1165,7,4.8
+400,36,Katra Bus Stand Inn,Budget,960,25,3.4
+401,36,Trikuta Residency,Mid-Range,1833,2,4.1
+402,36,Bhawan View Hotel,Mid-Range,2055,17,4.4
+403,36,Katra Heritage Inn,Mid-Range,3981,2,3.3
+404,36,Devi Darshan Hotel,Mid-Range,2341,8,4.1
+405,36,Trikuta Hills Resort,Premium,9334,3,3.8
+406,36,Vaishnavi Grand,Premium,11161,12,4.6
+407,36,Katra Palace Hotel,Premium,10751,8,4.3
+408,37,Trikuta Guest House,Budget,1184,17,3.7
+409,37,Ban Ganga Comfort Stay,Budget,1384,5,4.6
+410,37,Yatri Niwas Lodge,Budget,779,15,4.8
+411,37,Katra Bus Stand Inn,Budget,685,26,3.4
+412,37,Trikuta Residency,Mid-Range,2761,17,4.1
+413,37,Bhawan View Hotel,Mid-Range,2954,11,4.4
+414,37,Katra Heritage Inn,Mid-Range,3281,17,3.3
+415,37,Devi Darshan Hotel,Mid-Range,2121,20,4.1
+416,37,Trikuta Hills Resort,Premium,5535,12,3.8
+417,37,Vaishnavi Grand,Premium,11695,10,4.6
+418,37,Katra Palace Hotel,Premium,9544,7,4.3
+419,38,Trikuta Guest House,Budget,1106,8,3.7
+420,38,Ban Ganga Comfort Stay,Budget,1056,15,4.6
+421,38,Yatri Niwas Lodge,Budget,608,12,4.8
+422,38,Katra Bus Stand Inn,Budget,1198,29,3.4
+423,38,Trikuta Residency,Mid-Range,1876,13,4.1
+424,38,Bhawan View Hotel,Mid-Range,2848,3,4.4
+425,38,Katra Heritage Inn,Mid-Range,3678,11,3.3
+426,38,Devi Darshan Hotel,Mid-Range,2406,13,4.1
+427,38,Trikuta Hills Resort,Premium,9201,2,3.8
+428,38,Vaishnavi Grand,Premium,6154,2,4.6
+429,38,Katra Palace Hotel,Premium,11847,4,4.3
+430,39,Trikuta Guest House,Budget,893,12,3.7
+431,39,Ban Ganga Comfort Stay,Budget,1129,27,4.6
+432,39,Yatri Niwas Lodge,Budget,1472,19,4.8
+433,39,Katra Bus Stand Inn,Budget,936,25,3.4
+434,39,Trikuta Residency,Mid-Range,2814,3,4.1
+435,39,Bhawan View Hotel,Mid-Range,2598,5,4.4
+436,39,Katra Heritage Inn,Mid-Range,2975,17,3.3
+437,39,Devi Darshan Hotel,Mid-Range,3201,19,4.1
+438,39,Trikuta Hills Resort,Premium,6177,5,3.8
+439,39,Vaishnavi Grand,Premium,10873,5,4.6
+440,39,Katra Palace Hotel,Premium,11632,10,4.3
+441,40,Trikuta Guest House,Budget,1185,16,3.7
+442,40,Ban Ganga Comfort Stay,Budget,812,7,4.6
+443,40,Yatri Niwas Lodge,Budget,1244,13,4.8
+444,40,Katra Bus Stand Inn,Budget,866,18,3.4
+445,40,Trikuta Residency,Mid-Range,3005,3,4.1
+446,40,Bhawan View Hotel,Mid-Range,2797,15,4.4
+447,40,Katra Heritage Inn,Mid-Range,1836,3,3.3
+448,40,Devi Darshan Hotel,Mid-Range,3865,19,4.1
+449,40,Trikuta Hills Resort,Premium,6723,10,3.8
+450,40,Vaishnavi Grand,Premium,6084,9,4.6
+451,40,Katra Palace Hotel,Premium,11717,12,4.3
+452,41,Trikuta Guest House,Budget,792,3,3.7
+453,41,Ban Ganga Comfort Stay,Budget,667,29,4.6
+454,41,Yatri Niwas Lodge,Budget,619,29,4.8
+455,41,Katra Bus Stand Inn,Budget,1188,12,3.4
+456,41,Trikuta Residency,Mid-Range,2199,4,4.1
+457,41,Bhawan View Hotel,Mid-Range,3556,8,4.4
+458,41,Katra Heritage Inn,Mid-Range,2351,14,3.3
+459,41,Devi Darshan Hotel,Mid-Range,2297,15,4.1
+460,41,Trikuta Hills Resort,Premium,7625,4,3.8
+461,41,Vaishnavi Grand,Premium,10014,1,4.6
+462,41,Katra Palace Hotel,Premium,9565,4,4.3
+463,42,Trikuta Guest House,Budget,638,25,3.7
+464,42,Ban Ganga Comfort Stay,Budget,1011,5,4.6
+465,42,Yatri Niwas Lodge,Budget,1128,21,4.8
+466,42,Katra Bus Stand Inn,Budget,1243,27,3.4
+467,42,Trikuta Residency,Mid-Range,3428,12,4.1
+468,42,Bhawan View Hotel,Mid-Range,2139,16,4.4
+469,42,Katra Heritage Inn,Mid-Range,3814,18,3.3
+470,42,Devi Darshan Hotel,Mid-Range,2891,12,4.1
+471,42,Trikuta Hills Resort,Premium,6810,5,3.8
+472,42,Vaishnavi Grand,Premium,9834,10,4.6
+473,42,Katra Palace Hotel,Premium,5084,7,4.3
+474,43,Trikuta Guest House,Budget,606,21,3.7
+475,43,Ban Ganga Comfort Stay,Budget,898,9,4.6
+476,43,Yatri Niwas Lodge,Budget,834,26,4.8
+477,43,Katra Bus Stand Inn,Budget,1093,16,3.4
+478,43,Trikuta Residency,Mid-Range,2170,17,4.1
+479,43,Bhawan View Hotel,Mid-Range,2249,20,4.4
+480,43,Katra Heritage Inn,Mid-Range,2044,16,3.3
+481,43,Devi Darshan Hotel,Mid-Range,3114,5,4.1
+482,43,Trikuta Hills Resort,Premium,5378,3,3.8
+483,43,Vaishnavi Grand,Premium,10396,7,4.6
+484,43,Katra Palace Hotel,Premium,6032,7,4.3
+485,44,Trikuta Guest House,Budget,1150,5,3.7
+486,44,Ban Ganga Comfort Stay,Budget,1016,18,4.6
+487,44,Yatri Niwas Lodge,Budget,911,11,4.8
+488,44,Katra Bus Stand Inn,Budget,645,10,3.4
+489,44,Trikuta Residency,Mid-Range,2101,18,4.1
+490,44,Bhawan View Hotel,Mid-Range,2462,7,4.4
+491,44,Katra Heritage Inn,Mid-Range,3986,11,3.3
+492,44,Devi Darshan Hotel,Mid-Range,1849,4,4.1
+493,44,Trikuta Hills Resort,Premium,9076,3,3.8
+494,44,Vaishnavi Grand,Premium,10067,9,4.6
+495,44,Katra Palace Hotel,Premium,5648,5,4.3

@@ -1,20 +1,11 @@
 """
 agent.py
-The 'agent' brain. Two modes:
-
-1. RULE_BASED (default, no API key needed): extracts trip details with
-   simple parsing, queries the mock database, ranks combinations, and
-   proposes a plan. Deterministic and demo-safe.
-
-2. LLM_POWERED (auto-enabled if ANTHROPIC_API_KEY is set): uses Claude
-   with tool-use so the model itself decides which searches to run and
-   how to reason about trade-offs, then calls the same db functions.
-
-Both modes produce the same output shape so the Streamlit UI doesn't
-need to know which one is active.
+The 'agent' brain: extracts trip details from either the dropdown
+search form or a free-text request using simple rule-based parsing,
+queries the mock database across all transport modes (flight/train/
+bus), ranks combinations, and proposes options.
 """
 
-import os
 import re
 from datetime import date, timedelta
 
@@ -27,12 +18,12 @@ CATEGORY_KEYWORDS = {
     "vip": "VIP Darshan",
     "normal": "Normal Darshan",
 }
+MODE_KEYWORDS = {
+    "train": "train", "rail": "train", "railway": "train",
+    "bus": "bus", "flight": "flight", "fly": "flight", "flying": "flight", "plane": "flight", "air": "flight",
+}
 
-MAX_OPTIONS = 3  # how many ranked flight+slot combinations to show for review
-
-
-def _use_llm():
-    return bool(os.environ.get("ANTHROPIC_API_KEY"))
+MAX_OPTIONS = 3  # how many ranked combinations to show for review
 
 
 def _extract_pax(text):
@@ -58,9 +49,15 @@ def _extract_category(text):
     return None
 
 
+def _extract_mode(text):
+    t = text.lower()
+    for kw, mode in MODE_KEYWORDS.items():
+        if kw in t:
+            return mode
+    return None  # no preference -> show a diversified mix
+
+
 def _extract_date_range(text):
-    """Very simple heuristic date parsing for the prototype.
-    Defaults to the next 14 days if nothing specific is found."""
     t = text.lower()
     today = date.today()
     if "next week" in t:
@@ -84,16 +81,35 @@ def parse_request(text):
         "pax": _extract_pax(text),
         "origin": _extract_origin(text),
         "category": _extract_category(text),
+        "mode": _extract_mode(text),
         "start_date": _extract_date_range(text)[0],
         "end_date": _extract_date_range(text)[1],
     }
 
 
+def _search_transport(request):
+    """Searches whichever modes are relevant and returns one combined list."""
+    origin, start, end, pax = request["origin"], request["start_date"], request["end_date"], request["pax"]
+    mode = request.get("mode")
+
+    searchers = {
+        "flight": db.search_flights,
+        "train": db.search_trains,
+        "bus": db.search_buses,
+    }
+    modes_to_search = [mode] if mode in searchers else list(searchers.keys())
+
+    results = []
+    for m in modes_to_search:
+        results.extend(searchers[m](origin, start, end, min_seats=pax))
+    return results
+
+
 def build_plan(request):
     """
-    Core planning logic shared by both modes: query slots + flights,
-    rank every valid combination, and return the top options so the
-    user can compare and pick rather than being handed a single match.
+    Core planning logic shared by both modes: query slots + transport
+    across all relevant modes, rank every valid combination, and
+    return the top options so the user can compare and pick.
     """
     missing = []
     if not request.get("origin"):
@@ -103,124 +119,106 @@ def build_plan(request):
         return {
             "status": "NEEDS_INFO",
             "missing": missing,
-            "message": f"I need your {', '.join(missing)} to search flights. Which city will you travel from?",
+            "message": f"I need your {', '.join(missing)} to search travel options. Which city will you travel from?",
         }
 
     slots = db.search_yatra_slots(
         request["start_date"], request["end_date"],
         category=request.get("category"), min_seats=request["pax"]
     )
-    flights = db.search_flights(
-        request["origin"], request["start_date"], request["end_date"],
-        min_seats=request["pax"]
-    )
+    transport = _search_transport(request)
 
-    if not slots or not flights:
+    if not slots or not transport:
+        mode_note = f" by {request['mode']}" if request.get("mode") else ""
         return {
             "status": "NO_AVAILABILITY",
-            "message": "I couldn't find matching yatra slots and flights for those dates. Want me to widen the date range?",
+            "message": f"I couldn't find matching yatra slots and travel options{mode_note} for those dates. "
+                       "Want me to widen the date range or try a different mode of transport?",
             "slots_found": len(slots),
-            "flights_found": len(flights),
+            "flights_found": len(transport),
         }
 
-    # Rank every valid combination (flight lands a day before/same day as
-    # the yatra slot) by cheapest total, then keep the top few distinct
-    # options so the person can compare and choose rather than just
-    # being handed one "best" answer.
+    # Rank every valid combination (transport arrives a day before/same day
+    # as the yatra slot) by cheapest total.
     combos = []
-    for f in flights[:15]:
+    for tr in transport[:30]:
         for s in slots[:15]:
-            if s["slot_date"] >= f["flight_date"]:
-                total = (f["price"] + s["price"]) * request["pax"]
-                combos.append({"flight": f, "slot": s, "total_price": total})
+            if s["slot_date"] >= tr["travel_date"]:
+                total = (tr["price"] + s["price"]) * request["pax"]
+                combos.append({"flight": tr, "slot": s, "total_price": total})
 
     if not combos:
         return {
             "status": "NO_COMBINATION",
-            "message": "Found flights and slots separately, but no valid combination (flight would arrive after the yatra slot). Try a wider date range.",
+            "message": "Found travel options and yatra slots separately, but no valid combination "
+                       "(travel would arrive after the yatra slot). Try a wider date range.",
         }
 
     combos.sort(key=lambda c: c["total_price"])
 
-    # De-duplicate by (flight, category) rather than (flight, slot id):
-    # slot rows for the same category only differ by time-of-day and share
-    # the same price, so keying on slot id alone produced 3 "options" that
-    # were really the same flight+price shown 3 times. Keying on category
-    # means the top slots shown are meaningfully different in flight
-    # and/or price, not just a different clock time for the same thing.
     options = []
     seen = set()
+
+    if not request.get("mode"):
+        # No preference stated: show one option per mode first, so the
+        # person can actually compare flight vs train vs bus, rather
+        # than three near-identical cheap-train results dominating the
+        # list just because trains are usually cheapest.
+        for m in ("flight", "train", "bus"):
+            for c in combos:
+                if c["flight"]["mode"] == m:
+                    key = (c["flight"]["id"], c["flight"]["mode"], c["slot"]["category"])
+                    if key not in seen:
+                        seen.add(key)
+                        options.append(c)
+                        break
+
     for c in combos:
-        key = (c["flight"]["id"], c["slot"]["category"])
+        if len(options) >= MAX_OPTIONS:
+            break
+        key = (c["flight"]["id"], c["flight"]["mode"], c["slot"]["category"])
         if key in seen:
             continue
         seen.add(key)
         options.append(c)
-        if len(options) >= MAX_OPTIONS:
-            break
+
+    options.sort(key=lambda c: c["total_price"])
+    options = options[:MAX_OPTIONS]
 
     return {
         "status": "PLAN_READY",
         "pax": request["pax"],
         "options": options,
         "alt_slots_count": len(slots),
-        "alt_flights_count": len(flights),
+        "alt_flights_count": len(transport),
     }
 
 
-def confirm_booking(option, pax, user_name):
-    """Executes the mock booking for a chosen option from PLAN_READY['options']."""
+def confirm_booking(option, pax, user_name, hotel=None, hotel_nights=0, sightseeing_places=None):
+    """Executes the mock booking for a chosen option from PLAN_READY['options'],
+    optionally including a hotel stay (hotel cost is added to the total) and a
+    list of sightseeing places (informational only, doesn't affect price)."""
+    total = option["total_price"]
+    if hotel:
+        total += hotel.get("price_per_night", 0) * hotel_nights
+
     booking_id = db.create_booking(
         user_name=user_name,
         pax_count=pax,
-        yatra_slot_id=option["slot"]["id"],
-        flight_id=option["flight"]["id"],
-        total_price=option["total_price"],
+        yatra_slot=option["slot"],
+        transport=option["flight"],
+        total_price=total,
+        hotel=hotel,
+        hotel_nights=hotel_nights,
+        sightseeing_places=sightseeing_places,
     )
     return booking_id
 
 
-# ---------------------------------------------------------------------
-# Optional: LLM-powered mode. Only activates if ANTHROPIC_API_KEY is set.
-# Uses Claude to parse free-form text into the same request structure
-# that build_plan() expects, so the deterministic booking logic below
-# stays identical regardless of which mode parsed the request.
-# ---------------------------------------------------------------------
-
-def parse_request_llm(text, api_key):
-    import json
-    from anthropic import Anthropic
-
-    client = Anthropic(api_key=api_key)
-    today = date.today().isoformat()
-
-    system = f"""Extract yatra trip details from the user's message as JSON only.
-Today's date is {today}. Fields: pax (integer, default 1), origin (city name or null),
-category (one of "Normal Darshan","VIP Darshan","Helicopter Darshan", or null),
-start_date (YYYY-MM-DD), end_date (YYYY-MM-DD). If no dates mentioned, use the next 14 days.
-Respond with ONLY the JSON object, no other text."""
-
-    resp = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=300,
-        system=system,
-        messages=[{"role": "user", "content": text}],
-    )
-    raw = "".join(b.text for b in resp.content if b.type == "text")
-    raw = raw.strip().strip("`").replace("json", "", 1) if raw.strip().startswith("```") else raw
-    return json.loads(raw)
-
-
-def process_message(text, api_key=None):
-    """Single entry point the Streamlit UI calls. Returns a structured plan dict."""
-    if api_key:
-        try:
-            request = parse_request_llm(text, api_key)
-        except Exception:
-            request = parse_request(text)  # fall back safely
-    else:
-        request = parse_request(text)
-
+def process_message(text):
+    """Single entry point the Streamlit UI calls for free-text requests.
+    Returns a structured plan dict."""
+    request = parse_request(text)
     plan = build_plan(request)
     plan["_request"] = request
     return plan

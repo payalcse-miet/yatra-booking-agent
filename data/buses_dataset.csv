@@ -1,0 +1,91 @@
+id,day_offset,operator,origin,destination,departure_time,duration_mins,price,seats_available
+1,0,Private AC Sleeper,Delhi,Katra,18:00,829,1032,5
+2,0,HRTC Volvo,Delhi,Katra,21:00,810,1610,4
+3,1,J&K SRTC,Delhi,Katra,20:00,825,1017,36
+4,1,J&K SRTC,Delhi,Katra,20:00,787,960,23
+5,2,HRTC Volvo,Delhi,Katra,21:00,853,1415,19
+6,2,Private AC Sleeper,Delhi,Katra,19:00,879,1929,5
+7,3,J&K SRTC,Delhi,Katra,20:00,847,1244,21
+8,3,J&K SRTC,Delhi,Katra,19:00,834,2089,39
+9,4,J&K SRTC,Delhi,Katra,19:00,788,1361,3
+10,4,Private AC Sleeper,Delhi,Katra,18:00,827,1291,36
+11,5,J&K SRTC,Delhi,Katra,21:00,910,1654,26
+12,5,Private AC Sleeper,Delhi,Katra,21:00,854,960,37
+13,6,HRTC Volvo,Delhi,Katra,21:00,892,1368,7
+14,6,HRTC Volvo,Delhi,Katra,20:00,909,1044,39
+15,7,Private AC Sleeper,Delhi,Katra,21:00,787,2048,25
+16,7,J&K SRTC,Delhi,Katra,20:00,876,1520,32
+17,8,J&K SRTC,Delhi,Katra,18:00,851,1599,20
+18,8,HRTC Volvo,Delhi,Katra,20:00,868,1037,39
+19,9,J&K SRTC,Delhi,Katra,21:00,853,1361,1
+20,9,HRTC Volvo,Delhi,Katra,21:00,857,1923,4
+21,10,Private AC Sleeper,Delhi,Katra,21:00,797,1750,14
+22,10,J&K SRTC,Delhi,Katra,18:00,875,1082,34
+23,11,Private AC Sleeper,Delhi,Katra,20:00,812,1688,13
+24,11,Private AC Sleeper,Delhi,Katra,19:00,800,2187,1
+25,12,J&K SRTC,Delhi,Katra,21:00,861,1568,24
+26,12,HRTC Volvo,Delhi,Katra,20:00,900,2045,38
+27,13,HRTC Volvo,Delhi,Katra,20:00,901,1410,5
+28,13,Private AC Sleeper,Delhi,Katra,18:00,876,1885,20
+29,14,Private AC Sleeper,Delhi,Katra,21:00,808,1502,40
+30,14,HRTC Volvo,Delhi,Katra,19:00,863,1929,19
+31,15,Private AC Sleeper,Delhi,Katra,18:00,909,1821,18
+32,15,HRTC Volvo,Delhi,Katra,18:00,795,1816,31
+33,16,J&K SRTC,Delhi,Katra,20:00,795,1373,9
+34,16,HRTC Volvo,Delhi,Katra,21:00,877,1849,13
+35,17,J&K SRTC,Delhi,Katra,21:00,925,1670,7
+36,17,J&K SRTC,Delhi,Katra,20:00,858,1733,24
+37,18,HRTC Volvo,Delhi,Katra,21:00,882,1015,2
+38,18,HRTC Volvo,Delhi,Katra,18:00,819,1562,31
+39,19,HRTC Volvo,Delhi,Katra,20:00,800,1873,39
+40,19,Private AC Sleeper,Delhi,Katra,21:00,894,2104,8
+41,20,J&K SRTC,Delhi,Katra,20:00,782,2030,7
+42,20,HRTC Volvo,Delhi,Katra,21:00,813,1540,32
+43,21,J&K SRTC,Delhi,Katra,21:00,915,1725,22
+44,21,Private AC Sleeper,Delhi,Katra,18:00,800,1757,2
+45,22,Private AC Sleeper,Delhi,Katra,18:00,780,1471,28
+46,22,Private AC Sleeper,Delhi,Katra,20:00,787,1504,33
+47,23,Private AC Sleeper,Delhi,Katra,20:00,787,1359,2
+48,23,Private AC Sleeper,Delhi,Katra,21:00,817,1735,23
+49,24,J&K SRTC,Delhi,Katra,18:00,880,1120,34
+50,24,J&K SRTC,Delhi,Katra,19:00,838,1035,19
+51,25,Private AC Sleeper,Delhi,Katra,21:00,792,1377,39
+52,25,J&K SRTC,Delhi,Katra,18:00,894,1007,28
+53,26,HRTC Volvo,Delhi,Katra,19:00,803,1401,11
+54,26,J&K SRTC,Delhi,Katra,21:00,898,2156,29
+55,27,Private AC Sleeper,Delhi,Katra,21:00,829,934,9
+56,27,HRTC Volvo,Delhi,Katra,19:00,850,1280,15
+57,28,HRTC Volvo,Delhi,Katra,20:00,909,2166,33
+58,28,HRTC Volvo,Delhi,Katra,18:00,807,2064,32
+59,29,Private AC Sleeper,Delhi,Katra,20:00,875,1323,15
+60,29,Private AC Sleeper,Delhi,Katra,20:00,904,1022,18
+61,30,J&K SRTC,Delhi,Katra,19:00,789,1508,32
+62,30,J&K SRTC,Delhi,Katra,19:00,873,1866,32
+63,31,Private AC Sleeper,Delhi,Katra,21:00,843,1406,1
+64,31,J&K SRTC,Delhi,Katra,18:00,824,2187,21
+65,32,Private AC Sleeper,Delhi,Katra,18:00,929,1804,0
+66,32,HRTC Volvo,Delhi,Katra,20:00,877,1978,7
+67,33,HRTC Volvo,Delhi,Katra,18:00,839,1010,26
+68,33,HRTC Volvo,Delhi,Katra,20:00,794,1270,11
+69,34,Private AC Sleeper,Delhi,Katra,18:00,829,2059,11
+70,34,Private AC Sleeper,Delhi,Katra,20:00,885,1727,33
+71,35,HRTC Volvo,Delhi,Katra,18:00,923,1055,19
+72,35,HRTC Volvo,Delhi,Katra,18:00,790,1129,17
+73,36,Private AC Sleeper,Delhi,Katra,20:00,879,1315,0
+74,36,J&K SRTC,Delhi,Katra,21:00,873,1044,22
+75,37,HRTC Volvo,Delhi,Katra,18:00,839,917,8
+76,37,HRTC Volvo,Delhi,Katra,21:00,839,1730,6
+77,38,Private AC Sleeper,Delhi,Katra,20:00,856,901,34
+78,38,J&K SRTC,Delhi,Katra,19:00,900,1004,13
+79,39,Private AC Sleeper,Delhi,Katra,19:00,903,1515,8
+80,39,J&K SRTC,Delhi,Katra,20:00,824,1027,32
+81,40,Private AC Sleeper,Delhi,Katra,21:00,833,1311,20
+82,40,Private AC Sleeper,Delhi,Katra,20:00,849,1997,7
+83,41,Private AC Sleeper,Delhi,Katra,20:00,899,1613,23
+84,41,HRTC Volvo,Delhi,Katra,18:00,908,1453,2
+85,42,Private AC Sleeper,Delhi,Katra,18:00,824,1687,1
+86,42,J&K SRTC,Delhi,Katra,21:00,879,1092,14
+87,43,HRTC Volvo,Delhi,Katra,19:00,883,1500,31
+88,43,HRTC Volvo,Delhi,Katra,21:00,787,1732,32
+89,44,J&K SRTC,Delhi,Katra,18:00,927,1544,11
+90,44,Private AC Sleeper,Delhi,Katra,21:00,865,2055,18
