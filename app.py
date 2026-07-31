@@ -4,7 +4,8 @@ Streamlit front-end for the Vaishno Devi Yatra Booking Agent prototype.
 Run locally with: streamlit run app.py
 """
 
-from datetime import date, timedelta
+import os
+from datetime import date, datetime, timedelta
 
 import streamlit as st
 
@@ -13,9 +14,19 @@ import auth
 import db
 import explore_data
 import payment
-import weather
-import yatra_info
 from data_gen import build_database
+
+
+def fmt_time(hhmm):
+    """Formats a 24-hour 'HH:MM' string as 12-hour with AM/PM, e.g. '06:00' -> '6:00 AM'.
+    Built manually rather than with %-I/%#I strftime flags, since those aren't
+    portable between Windows and Mac/Linux."""
+    try:
+        t = datetime.strptime(str(hhmm), "%H:%M")
+        hour_12 = t.hour % 12 or 12
+        return f"{hour_12}:{t.minute:02d} {'AM' if t.hour < 12 else 'PM'}"
+    except (ValueError, TypeError):
+        return str(hhmm)
 
 st.set_page_config(page_title="Vaishno Devi Yatra Agent", page_icon="🛕", layout="centered")
 
@@ -159,7 +170,7 @@ if "selected_option" not in st.session_state:
 if "hotel_decision" not in st.session_state:
     st.session_state.hotel_decision = None  # None = not decided yet, {} = skipped, {...} = chosen
 if "sightseeing_decision" not in st.session_state:
-    st.session_state.sightseeing_decision = None  # None = not decided yet, [] = skipped, [...] = chosen places
+    st.session_state.sightseeing_decision = None  # None = not decided yet, [] = skipped, [names...] = chosen
 
 # --- Sidebar ---
 with st.sidebar:
@@ -258,12 +269,12 @@ with tab_book:
                         st.markdown(f"**{icon} {label}**")
                         st.write(f"{tr.get('operator', '-')} {tr.get('transport_no', '')}")
                         st.write(f"{tr['origin']} → {tr['destination']}")
-                        st.write(f"{tr['travel_date']} at {tr['departure_time']}")
+                        st.write(f"{tr['travel_date']} at {fmt_time(tr['departure_time'])}")
                         st.write(f"₹{tr['price']} / person")
                     with col2:
                         st.markdown("**🙏 Yatra slot**")
                         st.write(f"{s['category']}")
-                        st.write(f"{s['slot_date']} at {s['slot_time']}")
+                        st.write(f"{s['slot_date']} at {fmt_time(s['slot_time'])}")
                         st.write(f"₹{s['price']} / person")
 
                     st.markdown(
@@ -276,12 +287,12 @@ with tab_book:
                         st.json({
                             "Operator": tr.get("operator", "-"), "Number": tr.get("transport_no", "-"),
                             "Route": f"{tr['origin']} → {tr['destination']}", "Date": tr["travel_date"],
-                            "Departure": tr["departure_time"], "Duration": f"{tr.get('duration_mins', '-')} min",
+                            "Departure": fmt_time(tr["departure_time"]), "Duration": f"{tr.get('duration_mins', '-')} min",
                             "Seats left": tr["seats_available"], "Fare / person": f"₹{tr['price']}",
                         })
                         st.write("**Yatra slot details**")
                         st.json({
-                            "Category": s["category"], "Date": s["slot_date"], "Time": s["slot_time"],
+                            "Category": s["category"], "Date": s["slot_date"], "Time": fmt_time(s["slot_time"]),
                             "Seats left": s["seats_available"], "Fee / person": f"₹{s['price']}",
                         })
 
@@ -302,17 +313,7 @@ with tab_book:
         check_in_default = tr["travel_date"]
 
         with st.chat_message("assistant"):
-            st.markdown("**Getting to Katra, weather, and where to stay:**")
-
-            w = weather.get_weather(s["slot_date"])
-            with st.container(border=True):
-                if w["source"] == "forecast":
-                    st.markdown(f"🌤️ **Forecast for {w['date']}:** {w['summary']}, {w['low_c']}–{w['high_c']}°C")
-                else:
-                    st.markdown(f"🌤️ **Typical weather around {w['date']}:** {w['summary']}, {w['low_c']}–{w['high_c']}°C")
-                    st.caption("More than 15 days out — showing a seasonal average, not a live forecast.")
-                st.caption(w["advisory"])
-                st.caption(yatra_info.get_packing_tip(w))
+            st.markdown("**Getting to Katra, and where to stay:**")
 
             taxi = explore_data.get_taxi_info()
             with st.container(border=True):
@@ -353,10 +354,9 @@ with tab_book:
                 else:
                     for h in hotels[:5]:
                         with st.container(border=True):
-                            stars = "⭐" * int(round(h.get("rating", 0)))
-                            st.markdown(f"**{h['name']}** · {h['category']} · {stars} {h.get('rating', '-')}")
+                            st.markdown(f"**{h['name']}** · {h['category']}")
                             st.write(f"₹{h['price_per_night']}/night · {nights} night(s) → ₹{h['price_per_night'] * nights} total")
-                            st.caption(f"{h['rooms_available']} rooms left for check-in {check_in_default} · rating is sample data, not a real review score")
+                            st.caption(f"{h['rooms_available']} rooms left for check-in {check_in_default}")
                             if st.button(f"Select {h['name']}", key=f"select_hotel_{h['id']}", use_container_width=True):
                                 st.session_state.hotel_decision = {"hotel": h, "nights": nights}
                                 st.session_state.pop("_hotel_results", None)
@@ -367,58 +367,50 @@ with tab_book:
                 st.session_state.selected_option = None
                 st.rerun()
 
-    # --- STEP 4: optional sightseeing after darshan, drawn from the Explore Katra places ---
+    # --- STEP 4: optional sightseeing after darshan, using the Explore Katra data ---
     elif st.session_state.selected_option and st.session_state.hotel_decision is not None and st.session_state.sightseeing_decision is None:
         bundle = st.session_state.selected_option
         pax, opt = bundle["pax"], bundle["option"]
 
         with st.chat_message("assistant"):
-            st.markdown("**🗺️ Planning to visit any tourist places after darshan?**")
-            st.caption("Informational only — these aren't bookable, but we'll note your picks on the confirmation.")
+            st.markdown("**Planning to visit any tourist places after darshan?**")
+            st.caption("These places aren't bookable — just recommendations with local-travel guidance, so you can plan your time.")
 
-            with st.form("sightseeing_form"):
-                want_sightseeing = st.radio(
-                    "Add sightseeing?", ["No, skip this", "Yes, show me places"], horizontal=True
-                )
-                categories = ["All"] + explore_data.get_categories()
-                sightseeing_category_choice = st.selectbox("Filter by category", categories)
-                sightseeing_continue_clicked = st.form_submit_button(
-                    "Continue", type="primary", use_container_width=True
-                )
+            want_sightseeing = st.radio(
+                "Interested in sightseeing after darshan?",
+                ["No, skip this", "Yes, show me places"],
+                horizontal=True,
+                key="sightseeing_radio",
+            )
 
-            if sightseeing_continue_clicked:
-                if want_sightseeing == "No, skip this":
+            if want_sightseeing == "No, skip this":
+                if st.button("Continue", type="primary", key="skip_sightseeing", use_container_width=True):
                     st.session_state.sightseeing_decision = []
                     st.rerun()
-                else:
-                    places = explore_data.get_places(
-                        None if sightseeing_category_choice == "All" else sightseeing_category_choice
-                    )
-                    st.session_state["_sightseeing_results"] = places
+            else:
+                categories = ["All"] + explore_data.get_categories()
+                chosen_cat = st.selectbox("Filter by category", categories, key="sightseeing_cat_filter")
+                places = explore_data.get_places(None if chosen_cat == "All" else chosen_cat)
 
-            sightseeing_results = st.session_state.get("_sightseeing_results")
-            if sightseeing_results:
-                st.write("Check off the places you'd like to visit, then confirm below:")
-                selected_names = []
-                for p in sightseeing_results:
+                st.markdown("Select any places you'd like added to your trip notes:")
+                picked = []
+                for p in places:
                     with st.container(border=True):
                         checked = st.checkbox(
-                            f"{p['name']} · {p['category']} ({p['distance']})",
-                            key=f"sightsee_{p['name']}",
+                            f"**{p['name']}** · {p['category']} · {p['distance']}",
+                            key=f"sight_{p['name']}",
                         )
                         st.caption(p["description"])
                         st.caption(f"🚕 Getting there: {explore_data.get_local_travel_note(p['category'])}")
                         if checked:
-                            selected_names.append(p["name"])
+                            picked.append(p["name"])
 
-                if st.button("Confirm sightseeing picks", type="primary", use_container_width=True):
-                    st.session_state.sightseeing_decision = selected_names
-                    st.session_state.pop("_sightseeing_results", None)
+                if st.button("Continue with selected places", type="primary", key="confirm_sightseeing", use_container_width=True):
+                    st.session_state.sightseeing_decision = picked
                     st.rerun()
 
-            if st.button("← Back to stay", key="back_to_step3_from_sightseeing"):
+            if st.button("← Back", key="back_to_step3_from_sightseeing"):
                 st.session_state.hotel_decision = None
-                st.session_state.pop("_sightseeing_results", None)
                 st.rerun()
 
     # --- STEP 5: payment gateway, then confirm the booking ---
@@ -432,32 +424,23 @@ with tab_book:
         hotel = hotel_choice.get("hotel")
         hotel_nights = hotel_choice.get("nights", 0)
         hotel_cost = (hotel["price_per_night"] * hotel_nights) if hotel else 0
-        sightseeing_places = st.session_state.sightseeing_decision or []
         grand_total = opt["total_price"] + hotel_cost
+        sightseeing_places = st.session_state.sightseeing_decision or []
 
         with st.chat_message("assistant"):
             st.markdown("**Review & pay to confirm your booking:**")
             with st.container(border=True):
                 st.write(f"{icon} {tr.get('operator', '-')} {tr.get('transport_no', '')} · {tr['origin']} → {tr['destination']} · {tr['travel_date']}")
-                st.write(f"🙏 {s['category']} · {s['slot_date']} at {s['slot_time']}")
+                st.write(f"🙏 {s['category']} · {s['slot_date']} at {fmt_time(s['slot_time'])}")
                 st.write(f"👥 {pax} pilgrim(s)")
                 if hotel:
                     st.write(f"🏨 {hotel['name']} ({hotel['category']}) · {hotel_nights} night(s) · ₹{hotel_cost}")
                 else:
                     st.write("🏨 No hotel added")
                 if sightseeing_places:
-                    st.write(f"🗺️ Sightseeing: {', '.join(sightseeing_places)}")
+                    st.write(f"🗺️ Planning to visit: {', '.join(sightseeing_places)}")
                 else:
-                    st.write("🗺️ No sightseeing added")
-
-            trip_days = max(hotel_nights, 1)
-            misc_low = pax * trip_days * 400
-            misc_high = pax * trip_days * 700
-            st.caption(
-                f"💡 Rough extra budget to keep in mind for food, local taxis, and prasad/offerings: "
-                f"₹{misc_low}–₹{misc_high} for {pax} pilgrim(s) over {trip_days} day(s). "
-                "This is a general planning estimate only — it's not part of your bill below."
-            )
+                    st.write("🗺️ No sightseeing planned")
 
             paid = payment.render_payment_form("Total for this booking:", grand_total)
 
@@ -557,56 +540,7 @@ with tab_book:
             _handle_search_result(result, summary)
             st.rerun()
 
-        with st.expander("Or just describe your trip in your own words"):
-            if prompt := st.chat_input("e.g. Book for 3 people from Delhi next week, VIP darshan"):
-                with st.spinner("Checking slots, flights, trains & buses..."):
-                    result = agent.process_message(prompt)
-                _handle_search_result(result, prompt)
-                st.rerun()
-
 with tab_explore:
-    st.subheader("🙏 Yatra essentials")
-    with st.container(border=True):
-        aarti = yatra_info.AARTI_SCHEDULE
-        st.markdown("**Aarti timings**")
-        for w in aarti["windows"]:
-            st.write(f"- {w['label']}: {w['time']}")
-        st.caption(aarti["note"])
-        st.caption(aarti["shrine_hours"])
-
-    with st.container(border=True):
-        reg = yatra_info.REGISTRATION_INFO
-        st.markdown("**Yatra registration**")
-        st.write(reg["summary"])
-        st.write(reg["how"])
-        st.caption(reg["note"])
-
-    with st.container(border=True):
-        st.markdown("**Route options to Bhawan**")
-        for r in yatra_info.ROUTE_OPTIONS:
-            st.write(f"- **{r['name']}** ({r['distance']}): {r['detail']}")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        with st.container(border=True):
-            st.markdown("**Packing & rules**")
-            for item in yatra_info.PACKING_AND_RULES["prohibited"]:
-                st.write(f"🚫 {item}")
-            for tip in yatra_info.PACKING_AND_RULES["general_tips"]:
-                st.write(f"✅ {tip}")
-    with col2:
-        with st.container(border=True):
-            st.markdown("**Free facilities on route**")
-            for f in yatra_info.FREE_FACILITIES:
-                st.write(f"- {f}")
-
-    with st.container(border=True):
-        helpline = yatra_info.EMERGENCY_HELPLINE
-        st.markdown("**🆘 Emergency / helpline**")
-        st.write(f"Toll-free: {helpline['toll_free']} · Phone: {helpline['phone']} · WhatsApp: {helpline['whatsapp']}")
-        st.caption(helpline["note"])
-
-    st.divider()
     st.subheader("Getting from Jammu to Katra")
     taxi = explore_data.get_taxi_info()
     with st.container(border=True):

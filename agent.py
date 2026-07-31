@@ -1,13 +1,22 @@
 """
 agent.py
-The 'agent' brain: extracts trip details from either the dropdown
-search form or a free-text request using simple rule-based parsing,
-queries the mock database across all transport modes (flight/train/
-bus), ranks combinations, and proposes options.
+The 'agent' brain. Two modes:
+
+1. RULE_BASED (default, no API key needed): extracts trip details with
+   simple parsing, queries the mock database across all transport
+   modes (flight/train/bus), ranks combinations, and proposes options.
+
+2. LLM_POWERED (auto-enabled if ANTHROPIC_API_KEY is set): uses Claude
+   to parse the free-text request into the same structure, then reuses
+   the identical deterministic ranking/booking logic below.
+
+Both modes produce the same output shape so the Streamlit UI doesn't
+need to know which one is active.
 """
 
+import os
 import re
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 import db
 
@@ -24,6 +33,28 @@ MODE_KEYWORDS = {
 }
 
 MAX_OPTIONS = 3  # how many ranked combinations to show for review
+
+# Real-world buffers, used so a combination is never proposed that would
+# require a pilgrim to be in two places at once (e.g. landing at 6 AM and
+# having a darshan slot at 6 AM the same morning).
+#  - Flights land at Jammu Airport, not Katra - reaching Katra needs the
+#    Jammu-Katra taxi leg (~1.5-2 hrs; see explore_data.py's researched
+#    fares). Trains (into Katra's own SVDK station) and buses (direct to
+#    Katra) don't need this extra leg.
+#  - From Katra, Normal/VIP Darshan requires the ~12-13 km trek, commonly
+#    5-9 hours one-way plus queueing for an average pilgrim. Helicopter
+#    Darshan cuts this to a short flight plus walk and queueing, roughly
+#    1.5-2 hrs door-to-darshan from Katra.
+JAMMU_TO_KATRA_BUFFER_HOURS = 2
+DARSHAN_PREP_BUFFER_HOURS = {
+    "Helicopter Darshan": 2,
+    "VIP Darshan": 8,
+    "Normal Darshan": 8,
+}
+
+
+def _use_llm():
+    return bool(os.environ.get("ANTHROPIC_API_KEY"))
 
 
 def _extract_pax(text):
@@ -105,6 +136,21 @@ def _search_transport(request):
     return results
 
 
+def _transport_arrival_datetime(tr):
+    """Real arrival moment: departure + travel duration, plus a Jammu-Katra
+    taxi buffer for flights (trains/buses already terminate in Katra)."""
+    dep = datetime.strptime(f"{tr['travel_date']} {tr['departure_time']}", "%Y-%m-%d %H:%M")
+    duration = tr.get("duration_mins")
+    arrival = dep + timedelta(minutes=int(duration)) if duration else dep
+    if tr.get("mode") == "flight":
+        arrival += timedelta(hours=JAMMU_TO_KATRA_BUFFER_HOURS)
+    return arrival
+
+
+def _slot_datetime(s):
+    return datetime.strptime(f"{s['slot_date']} {s['slot_time']}", "%Y-%m-%d %H:%M")
+
+
 def build_plan(request):
     """
     Core planning logic shared by both modes: query slots + transport
@@ -138,12 +184,17 @@ def build_plan(request):
             "flights_found": len(transport),
         }
 
-    # Rank every valid combination (transport arrives a day before/same day
-    # as the yatra slot) by cheapest total.
+    # Rank every valid combination by cheapest total, but only combinations
+    # where the pilgrim could realistically reach the darshan slot given
+    # real transport arrival time + Jammu-Katra travel + trek/heli buffers
+    # (see DARSHAN_PREP_BUFFER_HOURS above) - never same-moment matches.
     combos = []
     for tr in transport[:30]:
+        arrival = _transport_arrival_datetime(tr)
         for s in slots[:15]:
-            if s["slot_date"] >= tr["travel_date"]:
+            buffer_hours = DARSHAN_PREP_BUFFER_HOURS.get(s["category"], 8)
+            earliest_possible_darshan = arrival + timedelta(hours=buffer_hours)
+            if _slot_datetime(s) >= earliest_possible_darshan:
                 total = (tr["price"] + s["price"]) * request["pax"]
                 combos.append({"flight": tr, "slot": s, "total_price": total})
 
@@ -196,8 +247,9 @@ def build_plan(request):
 
 def confirm_booking(option, pax, user_name, hotel=None, hotel_nights=0, sightseeing_places=None):
     """Executes the mock booking for a chosen option from PLAN_READY['options'],
-    optionally including a hotel stay (hotel cost is added to the total) and a
-    list of sightseeing places (informational only, doesn't affect price)."""
+    optionally including a hotel stay and a list of sightseeing places
+    (hotel cost is added to the total; sightseeing places are informational,
+    not priced, since they aren't bookable through this app)."""
     total = option["total_price"]
     if hotel:
         total += hotel.get("price_per_night", 0) * hotel_nights
@@ -215,10 +267,45 @@ def confirm_booking(option, pax, user_name, hotel=None, hotel_nights=0, sightsee
     return booking_id
 
 
-def process_message(text):
-    """Single entry point the Streamlit UI calls for free-text requests.
-    Returns a structured plan dict."""
-    request = parse_request(text)
+# ---------------------------------------------------------------------
+# Optional: LLM-powered mode. Only activates if ANTHROPIC_API_KEY is set.
+# ---------------------------------------------------------------------
+
+def parse_request_llm(text, api_key):
+    import json
+    from anthropic import Anthropic
+
+    client = Anthropic(api_key=api_key)
+    today = date.today().isoformat()
+
+    system = f"""Extract yatra trip details from the user's message as JSON only.
+Today's date is {today}. Fields: pax (integer, default 1), origin (city name or null),
+category (one of "Normal Darshan","VIP Darshan","Helicopter Darshan", or null),
+mode (one of "flight","train","bus", or null if no preference stated),
+start_date (YYYY-MM-DD), end_date (YYYY-MM-DD). If no dates mentioned, use the next 14 days.
+Respond with ONLY the JSON object, no other text."""
+
+    resp = client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=300,
+        system=system,
+        messages=[{"role": "user", "content": text}],
+    )
+    raw = "".join(b.text for b in resp.content if b.type == "text")
+    raw = raw.strip().strip("`").replace("json", "", 1) if raw.strip().startswith("```") else raw
+    return json.loads(raw)
+
+
+def process_message(text, api_key=None):
+    """Single entry point the Streamlit UI calls. Returns a structured plan dict."""
+    if api_key:
+        try:
+            request = parse_request_llm(text, api_key)
+        except Exception:
+            request = parse_request(text)
+    else:
+        request = parse_request(text)
+
     plan = build_plan(request)
     plan["_request"] = request
     return plan
